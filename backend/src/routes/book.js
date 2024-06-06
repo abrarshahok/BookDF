@@ -1,15 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
-const fileFilter = require("../validators/validate-mime-types");
-
-const storage = multer.memoryStorage();
-const upload = multer({
-  limits: { fileSize: 500 * 1024 },
-  storage: storage,
-  fileFilter: fileFilter,
-});
-
+const upload = require("../middlewares/file-upload");
 const bookController = require("../controllers/book-controller");
 
 // books/add-book => POST

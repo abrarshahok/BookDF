@@ -43,6 +43,11 @@ const bookSchema = new Schema(
         default: 0,
       },
     },
+    creator: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     reviews: [
       {
         type: Schema.Types.ObjectId,
