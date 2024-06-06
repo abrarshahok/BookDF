@@ -1,5 +1,8 @@
+import 'package:bookdf/features/home/presentation/state/book_state.dart';
+import 'package:bookdf/providers/book_provider.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/book_container.dart';
 import '/features/home/presentation/widgets/book_category_chip.dart';
 import '/components/custom_text_form_field.dart';
@@ -123,45 +126,75 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 2 / 3,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 10,
-              ),
-              delegate: SliverChildListDelegate(
-                const [
-                  BookContainer(
-                    title: 'The Boy With One Name',
-                    rating: 4.0,
-                    author: 'J.R. Wallis',
-                    imageUrl:
-                        'https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781471157936/the-boy-with-one-name-9781471157936_hr.jpg',
-                  ),
-                  BookContainer(
-                    title: 'The Name of the Wind',
-                    author: 'Patrick Rothfuss',
-                    imageUrl:
-                        'https://www.thepacer.net/wp-content/uploads/2020/11/91b8oNwaV1L.jpg',
-                    rating: 5.0,
-                  ),
-                  BookContainer(
-                    title: 'The Book With One Name',
-                    rating: 4.0,
-                    author: 'Anonymous',
-                    imageUrl:
-                        'https://sammicox.wordpress.com/wp-content/uploads/2018/06/the-book-with-no-name-front-cover.jpg',
-                  ),
-                  SizedBox(height: 100),
-                ],
-              ),
-            ),
+          const SliverPadding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            sliver: AllBooksScreen(),
           ),
         ],
       ),
+    );
+  }
+}
+
+class AllBooksScreen extends StatelessWidget {
+  const AllBooksScreen({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Provider.of<BookProvider>(context, listen: false).fetchBooks();
+    return Consumer<BookProvider>(
+      builder: (context, provider, _) {
+        final state = provider.state;
+        if (state is LoadingState) {
+          return const CircularProgressIndicator();
+        } else if (state is SuccessState) {
+          return SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 2 / 3,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 10,
+            ),
+            delegate: SliverChildListDelegate(
+              const [
+                BookContainer(
+                  title: 'The Boy With One Name',
+                  rating: 4.0,
+                  author: 'J.R. Wallis',
+                  imageUrl:
+                      'https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781471157936/the-boy-with-one-name-9781471157936_hr.jpg',
+                ),
+                BookContainer(
+                  title: 'The Name of the Wind',
+                  author: 'Patrick Rothfuss',
+                  imageUrl:
+                      'https://www.thepacer.net/wp-content/uploads/2020/11/91b8oNwaV1L.jpg',
+                  rating: 5.0,
+                ),
+                BookContainer(
+                  title: 'The Book With One Name',
+                  rating: 4.0,
+                  author: 'Anonymous',
+                  imageUrl:
+                      'https://sammicox.wordpress.com/wp-content/uploads/2018/06/the-book-with-no-name-front-cover.jpg',
+                ),
+                SizedBox(height: 100),
+              ],
+            ),
+          );
+        } else if (state is ErrorState) {
+          return Center(
+            child: Text(
+              state.errorMessage,
+              style: secondaryStyle,
+            ),
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
     );
   }
 }

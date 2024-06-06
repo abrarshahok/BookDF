@@ -1,6 +1,7 @@
-import 'package:bookdf/features/home/presentation/screens/app_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:bookdf/themes/text_theme.dart';
+import 'package:provider/provider.dart';
+import '/features/home/presentation/screens/app_screen.dart';
+import '/utils/providers.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,14 +12,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'BookDF',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        textTheme: textTheme,
+    return MultiProvider(
+      providers: providers,
+      child: const MaterialApp(
+        title: 'BookDF',
+        debugShowCheckedModeBanner: false,
+        home: AppScreen(),
       ),
-      home: const AppScreen(),
     );
   }
 }
