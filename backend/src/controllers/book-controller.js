@@ -1,168 +1,176 @@
 const Book = require("../models/book");
 const User = require("../models/user");
 
-const addBook = async (req, res, next) => {
-  try {
-    const { title, author, description, genre, pages } = req.body;
+class BookController {
+  static addBook = async (req, res, next) => {
+    try {
+      const { title, author, description, genre, pages } = req.body;
 
-    const newBook = new Book({
-      title,
-      author,
-      description,
-      genre,
-      pages,
-      coverImage: {
-        data: req.files["coverImage"][0].buffer,
-        contentType: req.files["coverImage"][0].mimetype,
-      },
-      pdf: {
-        filename: req.files["pdf"][0].originalname,
-        data: req.files["pdf"][0].buffer,
-        contentType: req.files["pdf"][0].mimetype,
-      },
-      ratings: {
-        averageRating: 0,
-        numberOfRatings: 0,
-      },
-    });
-
-    await newBook.save();
-
-    const user = await User.findById(req.userId);
-
-    user.libray.push(newBook);
-
-    await user.save();
-
-    res.status(200).json({ success: true, message: "Book saved successfully" });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ success: false, message: "Internal Server Error!" });
-  }
-};
-
-const updateBook = async (req, res, next) => {
-  try {
-    const { bookId, title, author, description, genre, pages } = req.body;
-
-    const book = await Book.findById(bookId);
-
-    if (!book) {
-      return res
-        .status(200)
-        .json({ success: false, message: "Book not found!" });
-    }
-
-    if (book.creator.toString() !== req.userId) {
-      return res.status(403).json({
-        success: false,
-        message: "Not Authorized!",
+      const newBook = new Book({
+        title,
+        author,
+        description,
+        genre,
+        pages,
+        coverImage: {
+          data: req.files["coverImage"][0].buffer,
+          contentType: req.files["coverImage"][0].mimetype,
+        },
+        pdf: {
+          filename: req.files["pdf"][0].originalname,
+          data: req.files["pdf"][0].buffer,
+          contentType: req.files["pdf"][0].mimetype,
+        },
+        ratings: {
+          averageRating: 0,
+          numberOfRatings: 0,
+        },
       });
-    }
 
-    if (title) book.title = title;
+      await newBook.save();
 
-    if (author) book.author = author;
+      const user = await User.findById(req.userId);
 
-    if (description) book.description = description;
+      user.libray.push(newBook);
 
-    if (genre) book.genre = genre;
+      await user.save();
 
-    if (pages) book.pages = pages;
-
-    if (req.files["coverImage"]) {
-      book.coverImage = {
-        data: req.files["coverImage"][0].buffer,
-        contentType: req.files["coverImage"][0].mimetype,
-      };
-    }
-
-    if (req.files["pdf"]) {
-      book.pdf = {
-        filename: req.files["pdf"][0].originalname,
-        data: req.files["pdf"][0].buffer,
-        contentType: req.files["pdf"][0].mimetype,
-      };
-    }
-
-    await book.save();
-
-    res
-      .status(200)
-      .json({ success: true, message: "Book updated successfully" });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ success: false, message: "Internal Server Error!" });
-  }
-};
-
-const deleteBook = async (req, res, next) => {
-  try {
-    const { bookId } = req.body;
-
-    const book = await Book.findById(bookId);
-
-    if (!book) {
-      return res
+      res
         .status(200)
-        .json({ success: true, message: "Book not found!" });
+        .json({ success: true, message: "Book saved successfully" });
+    } catch (err) {
+      console.log(err);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error!" });
     }
+  };
 
-    if (book.creator.toString() !== req.userId) {
-      return res.status(403).json({
-        success: false,
-        message: "Not Authorized!",
-      });
-    }
+  static updateBook = async (req, res, next) => {
+    try {
+      const { bookId, title, author, description, genre, pages } = req.body;
 
-    await Book.findByIdAndDelete(bookId);
+      const book = await Book.findById(bookId);
 
-    const user = await User.findById(req.userId);
+      if (!book) {
+        return res
+          .status(200)
+          .json({ success: false, message: "Book not found!" });
+      }
 
-    user.libray.pull(bookId);
+      if (book.creator.toString() !== req.userId) {
+        return res.status(403).json({
+          success: false,
+          message: "Not Authorized!",
+        });
+      }
 
-    await user.save();
+      if (title) book.title = title;
 
-    res
-      .status(200)
-      .json({ success: true, message: "Book deleted successfully" });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ success: false, message: "Internal Server Error!" });
-  }
-};
+      if (author) book.author = author;
 
-const getBook = async (req, res, next) => {
-  try {
-    const { bookId } = req.body;
+      if (description) book.description = description;
 
-    const book = await Book.findById(bookId);
+      if (genre) book.genre = genre;
 
-    if (!book) {
-      return res
+      if (pages) book.pages = pages;
+
+      if (req.files["coverImage"]) {
+        book.coverImage = {
+          data: req.files["coverImage"][0].buffer,
+          contentType: req.files["coverImage"][0].mimetype,
+        };
+      }
+
+      if (req.files["pdf"]) {
+        book.pdf = {
+          filename: req.files["pdf"][0].originalname,
+          data: req.files["pdf"][0].buffer,
+          contentType: req.files["pdf"][0].mimetype,
+        };
+      }
+
+      await book.save();
+
+      res
         .status(200)
-        .json({ success: true, message: "Book not found!" });
+        .json({ success: true, message: "Book updated successfully" });
+    } catch (err) {
+      console.log(err);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error!" });
     }
+  };
 
-    res.status(200).json({ success: true, book: book });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Internal Server Error!" });
-  }
-};
+  static deleteBook = async (req, res, next) => {
+    try {
+      const { bookId } = req.body;
 
-const getBooks = async (req, res, next) => {
-  try {
-    const books = await Book.find();
-    res.status(200).json({ success: true, books: books });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Internal Server Error!" });
-  }
-};
+      const book = await Book.findById(bookId);
 
-module.exports = {
-  addBook,
-  getBooks,
-  deleteBook,
-  updateBook,
-  getBook,
-};
+      if (!book) {
+        return res
+          .status(200)
+          .json({ success: true, message: "Book not found!" });
+      }
+
+      if (book.creator.toString() !== req.userId) {
+        return res.status(403).json({
+          success: false,
+          message: "Not Authorized!",
+        });
+      }
+
+      await Book.findByIdAndDelete(bookId);
+
+      const user = await User.findById(req.userId);
+
+      user.libray.pull(bookId);
+
+      await user.save();
+
+      res
+        .status(200)
+        .json({ success: true, message: "Book deleted successfully" });
+    } catch (err) {
+      console.log(err);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error!" });
+    }
+  };
+
+  static getBook = async (req, res, next) => {
+    try {
+      const { bookId } = req.body;
+
+      const book = await Book.findById(bookId);
+
+      if (!book) {
+        return res
+          .status(200)
+          .json({ success: true, message: "Book not found!" });
+      }
+
+      res.status(200).json({ success: true, book: book });
+    } catch (err) {
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error!" });
+    }
+  };
+
+  static getBooks = async (req, res, next) => {
+    try {
+      const books = await Book.find();
+      res.status(200).json({ success: true, books: books });
+    } catch (err) {
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error!" });
+    }
+  };
+}
+
+module.exports = BookController;
