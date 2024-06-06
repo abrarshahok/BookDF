@@ -1,0 +1,24 @@
+name: bookdf
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.3.3 <4.0.0'
+
+dependencies:
+  dot_curved_bottom_nav: ^0.0.2
+  feather_icons: ^1.2.0
+  flutter:
+    sdk: flutter
+  flutter_animation_progress_bar: ^2.3.1
+  google_fonts: ^6.2.1
+  palette_generator: ^0.3.3+3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
