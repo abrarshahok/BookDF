@@ -15,7 +15,7 @@ router.post(
   authController.signup
 );
 
-router.get(
+router.post(
   "/signin",
   authValidator.validateSigninRules(),
   validationResultHandler,
