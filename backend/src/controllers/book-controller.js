@@ -90,39 +90,6 @@ const updateBook = async (req, res, next) => {
   }
 };
 
-const addReview = async (req, res, next) => {
-  try {
-    const { bookId, rating, reviewText } = req.body;
-
-    const newReview = new Review({
-      user: req.userId,
-      reviewText: reviewText,
-      rating: rating,
-    });
-
-    const savedReview = await newReview.save();
-
-    const book = await Book.findById(bookId);
-
-    book.ratings.push(savedReview);
-
-    book.ratings.numberOfRatings += 1;
-
-    book.ratings.averageRating =
-      (book.ratings.averageRating * (book.ratings.numberOfRatings - 1) +
-        rating) /
-      book.ratings.numberOfRatings;
-
-    await book.save();
-
-    res
-      .status(200)
-      .json({ success: true, message: "Review added successfully." });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Internal Server Error!" });
-  }
-};
-
 const deleteBook = async (req, res, next) => {
   try {
     const { bookId } = req.body;
@@ -150,11 +117,29 @@ const deleteBook = async (req, res, next) => {
 
     await user.save();
 
-    return res
+    res
       .status(200)
       .json({ success: true, message: "Book deleted successfully" });
   } catch (err) {
     console.log(err);
+    res.status(500).json({ success: false, message: "Internal Server Error!" });
+  }
+};
+
+const getBook = async (req, res, next) => {
+  try {
+    const { bookId } = req.body;
+
+    const book = await Book.findById(bookId);
+
+    if (!book) {
+      return res
+        .status(200)
+        .json({ success: true, message: "Book not found!" });
+    }
+
+    res.status(200).json({ success: true, book: book });
+  } catch (err) {
     res.status(500).json({ success: false, message: "Internal Server Error!" });
   }
 };
@@ -170,7 +155,7 @@ const getBooks = async (req, res, next) => {
 
 module.exports = {
   addBook,
-  addReview,
   getBooks,
   deleteBook,
+  updateBook,
 };
