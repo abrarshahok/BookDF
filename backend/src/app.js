@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 
 const app = express();
 const bookRoutes = require("./routes/book");
+const authRoutes = require("./routes/auth");
 
 app.use(express.json());
 
@@ -17,7 +18,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/books", bookRoutes);
+app.use("/auth", authRoutes);
+app.use("/books", isAuth, bookRoutes);
 
 const uri =
   "mongodb+srv://abrar:21bscs20@cluster0.jlmafxc.mongodb.net/bookDF?retryWrites=true&w=majority&appName=Cluster0";
