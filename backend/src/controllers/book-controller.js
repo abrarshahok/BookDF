@@ -53,6 +53,13 @@ const updateBook = async (req, res, next) => {
         .json({ success: false, message: "Book not found!" });
     }
 
+    if (book.creator.toString() !== req.userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Not Authorized!",
+      });
+    }
+
     if (title) book.title = title;
 
     if (author) book.author = author;
@@ -157,4 +164,5 @@ module.exports = {
   getBooks,
   deleteBook,
   updateBook,
+  getBook,
 };
