@@ -1,12 +1,14 @@
 const express = require("express");
+const morgan = require("morgan");
 const mongoose = require("mongoose");
+const fs = require("fs");
 const bodyParser = require("body-parser");
-
+const path = require("path");
 const app = express();
 const bookRoutes = require("./routes/book");
 const authRoutes = require("./routes/auth");
-
 const isAuth = require("./middlewares/is-auth");
+require("dotenv").config();
 
 app.use(bodyParser.json());
 
@@ -21,16 +23,20 @@ app.use((req, res, next) => {
   next();
 });
 
+const accessLogStream = fs.createWriteStream(
+  path.join(path.resolve(), "access.log"),
+  { flags: "a" }
+);
+
+app.use(morgan("combined", { stream: accessLogStream }));
+
 app.use("/auth", authRoutes);
 app.use("/books", isAuth, bookRoutes);
 
-const uri =
-  "mongodb+srv://abrar:21bscs20@cluster0.jlmafxc.mongodb.net/bookDF?retryWrites=true&w=majority&appName=Cluster0";
-
 mongoose
-  .connect(uri)
+  .connect(process.env.DB_URL)
   .then((res) => {
-    app.listen(3000);
+    app.listen(process.env.PORT || 3000);
     console.log("Connected!");
   })
   .catch((err) => {
