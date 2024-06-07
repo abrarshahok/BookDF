@@ -1,11 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
 const app = express();
 const bookRoutes = require("./routes/book");
 const authRoutes = require("./routes/auth");
 
-app.use(express.json());
+const isAuth = require("./middlewares/is-auth");
+
+app.use(bodyParser.json());
 
 // Prevent CORS Error
 app.use((req, res, next) => {

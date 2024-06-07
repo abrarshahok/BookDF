@@ -1,4 +1,6 @@
 const User = require("../models/user");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 class AuthController {
   static signup = async (req, res, next) => {
@@ -21,10 +23,12 @@ class AuthController {
       await user.save();
 
       res.status(200).send({ success: true, message: "Signup success." });
-    } catch (err) {
-      res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error!" });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
     }
   };
 
@@ -57,10 +61,12 @@ class AuthController {
       return res
         .status(200)
         .send({ success: true, message: "Signin success.", jwt: token });
-    } catch (err) {
-      res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error!" });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
     }
   };
 
@@ -75,10 +81,12 @@ class AuthController {
       }
 
       return res.status(200).send({ success: true, user: user });
-    } catch (err) {
-      res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error!" });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
     }
   };
 }

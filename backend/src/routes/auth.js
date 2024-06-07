@@ -6,10 +6,12 @@ const authValidator = require("../validators/auth-validator");
 const {
   validationResultHandler,
 } = require("../validators/validation-result-handler");
-const isAuth = require("../middlewares/is-auth");
+const isAuth = require("../middlewares/is-auth.js");
+const upload = require("../middlewares/file-upload");
 
 router.post(
   "/signup",
+  upload.fields([{ name: "pic", maxCount: 1 }]),
   authValidator.validateSignupRules(),
   validationResultHandler,
   AuthController.signup

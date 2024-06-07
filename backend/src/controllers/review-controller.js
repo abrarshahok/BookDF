@@ -4,8 +4,8 @@ const Book = require("../models/book");
 class ReviewController {
   static addReview = async (req, res, next) => {
     try {
-      const { bookId, rating, reviewText } = req.body;
-
+      const { rating, reviewText } = req.body;
+      const { bookId } = req.params;
       const newReview = new Review({
         user: req.userId,
         reviewText: reviewText,
@@ -16,7 +16,7 @@ class ReviewController {
 
       const book = await Book.findById(bookId);
 
-      book.ratings.push(savedReview);
+      book.reviews.push(savedReview);
 
       book.ratings.numberOfRatings += 1;
 
@@ -31,13 +31,84 @@ class ReviewController {
         .status(200)
         .json({ success: true, message: "Review added successfully." });
     } catch (err) {
+      console.log(err);
       res
         .status(500)
         .json({ success: false, message: "Internal Server Error!" });
     }
   };
 
-  static getReviews = (req, res, next) => {};
+  static deleteReview = async (req, res, next) => {
+    try {
+      const { reviewId } = req.body;
+      const { bookId } = req.params;
+
+      const review = await Review.findById(reviewId);
+
+      if (!review) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Review Not Found!" });
+      }
+
+      if (review.user.toString() !== req.userId) {
+        return res
+          .status(402)
+          .json({ success: true, message: "Unauthorized!" });
+      }
+
+      await Review.findByIdAndDelete(reviewId);
+
+      const book = await Book.findById(bookId);
+
+      book.reviews.pull(reviewId);
+
+      book.ratings.numberOfRatings -= 1;
+
+      if (book.ratings.numberOfRatings !== 0) {
+        book.ratings.averageRating =
+          (book.ratings.averageRating * (book.ratings.numberOfRatings + 1) -
+            review.rating) /
+          book.ratings.numberOfRatings;
+      }
+
+      await book.save();
+
+      res
+        .status(200)
+        .json({ success: true, message: "Review deleted successfully." });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
+    }
+  };
+
+  static getReviews = async (req, res, next) => {
+    try {
+      const { bookId } = req.params;
+
+      const book = await Book.findById(bookId);
+
+      if (!book) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Book Not Found!" });
+      }
+
+      const reviews = await Review.find({ _id: { $in: book.reviews } });
+
+      res.status(200).json({ success: true, reviews: reviews });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
+    }
+  };
 }
 
 module.exports = ReviewController;

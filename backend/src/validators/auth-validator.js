@@ -3,11 +3,8 @@ const { body } = require("express-validator");
 
 const validateSignupRules = () => {
   return [
-    body("name")
+    body("username")
       .trim()
-      .not()
-      .isEmpty()
-      .withMessage("Name is required.")
       .isLength({ min: 3 })
       .withMessage("Name should be of atleast 3 characters."),
     body("email")

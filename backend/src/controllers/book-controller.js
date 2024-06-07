@@ -16,6 +16,7 @@ class BookController {
           data: req.files["coverImage"][0].buffer,
           contentType: req.files["coverImage"][0].mimetype,
         },
+        creator: req.userId,
         pdf: {
           filename: req.files["pdf"][0].originalname,
           data: req.files["pdf"][0].buffer,
@@ -38,11 +39,12 @@ class BookController {
       res
         .status(200)
         .json({ success: true, message: "Book saved successfully" });
-    } catch (err) {
-      console.log(err);
-      res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error!" });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
     }
   };
 
@@ -95,11 +97,12 @@ class BookController {
       res
         .status(200)
         .json({ success: true, message: "Book updated successfully" });
-    } catch (err) {
-      console.log(err);
-      res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error!" });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
     }
   };
 
@@ -133,11 +136,12 @@ class BookController {
       res
         .status(200)
         .json({ success: true, message: "Book deleted successfully" });
-    } catch (err) {
-      console.log(err);
-      res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error!" });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
     }
   };
 
@@ -154,10 +158,12 @@ class BookController {
       }
 
       res.status(200).json({ success: true, book: book });
-    } catch (err) {
-      res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error!" });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
     }
   };
 
@@ -165,10 +171,12 @@ class BookController {
     try {
       const books = await Book.find();
       res.status(200).json({ success: true, books: books });
-    } catch (err) {
-      res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error!" });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
     }
   };
 }
