@@ -7,7 +7,7 @@ class BookProvider with ChangeNotifier {
   BookState get state => _state;
 
   void fetchBooks() async {
-    _setState(LoadingState());
+    _setState(LoadingState(), build: false);
 
     final result = await BookRepository.instance.fetchBooks();
 
@@ -17,8 +17,10 @@ class BookProvider with ChangeNotifier {
     );
   }
 
-  void _setState(BookState newState) {
+  void _setState(BookState newState, {bool build = true}) {
     _state = newState;
-    notifyListeners();
+    if (build) {
+      notifyListeners();
+    }
   }
 }

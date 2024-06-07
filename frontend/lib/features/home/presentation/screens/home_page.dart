@@ -136,19 +136,29 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class AllBooksScreen extends StatelessWidget {
+class AllBooksScreen extends StatefulWidget {
   const AllBooksScreen({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  State<AllBooksScreen> createState() => _AllBooksScreenState();
+}
+
+class _AllBooksScreenState extends State<AllBooksScreen> {
+  @override
+  void initState() {
     Provider.of<BookProvider>(context, listen: false).fetchBooks();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Consumer<BookProvider>(
       builder: (context, provider, _) {
         final state = provider.state;
         if (state is LoadingState) {
-          return const CircularProgressIndicator();
+          return const SliverToBoxAdapter(child: CircularProgressIndicator());
         } else if (state is SuccessState) {
           return SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -185,14 +195,16 @@ class AllBooksScreen extends StatelessWidget {
             ),
           );
         } else if (state is ErrorState) {
-          return Center(
-            child: Text(
-              state.errorMessage,
-              style: secondaryStyle,
+          return SliverToBoxAdapter(
+            child: Center(
+              child: Text(
+                state.errorMessage,
+                style: secondaryStyle,
+              ),
             ),
           );
         } else {
-          return const SizedBox();
+          return const SliverToBoxAdapter(child: SizedBox());
         }
       },
     );

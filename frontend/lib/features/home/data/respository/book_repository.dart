@@ -12,7 +12,8 @@ class BookRepository {
 
   Future<Either<String, List<Book>>> fetchBooks() async {
     try {
-      final response = await http.get(Uri.parse('/books'));
+      final response = await http.get(Uri.parse('/books'),
+          headers: {'Content-Type': 'application/json'});
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
@@ -24,6 +25,7 @@ class BookRepository {
 
       return const Left('Failed to Load Books');
     } catch (err) {
+      log(err.toString());
       return const Left('Something went wrong!');
     }
   }
