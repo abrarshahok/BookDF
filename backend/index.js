@@ -30,6 +30,8 @@ const accessLogStream = fs.createWriteStream(
 
 app.use(morgan("combined", { stream: accessLogStream }));
 
+app.get("/", (req, res) => res.send("Express on Vercel"));
+
 app.use("/auth", authRoutes);
 app.use("/books", isAuth, bookRoutes);
 
