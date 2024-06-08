@@ -1,5 +1,6 @@
 const Book = require("../models/book");
 const User = require("../models/user");
+const Review = require("../models/review");
 
 const generateBase64String = require("../utils/to-base64-string");
 const pdfPageCounter = require("../utils/pdf-page-counter");
@@ -109,7 +110,7 @@ class BookController {
 
   static deleteBook = async (req, res, next) => {
     try {
-      const { bookId } = req.body;
+      const { bookId } = req.params;
 
       const book = await Book.findById(bookId);
 
@@ -126,11 +127,19 @@ class BookController {
         });
       }
 
+      const reviews = book.reviews.map((review) => review._id);
+
       await Book.findByIdAndDelete(bookId);
+
+      await Review.deleteMany({
+        _id: { $in: reviews },
+      });
 
       const user = await User.findById(req.userId);
 
       user.libray.pull(bookId);
+
+      user.bookmarks.pull(bookId);
 
       await user.save();
 

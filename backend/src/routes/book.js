@@ -17,6 +17,8 @@ router.post(
 // books/ => GET
 router.get("/", BookController.getBooks);
 
+router.delete("/:bookId", BookController.deleteBook);
+
 router.post("/:bookId/reviews", ReviewController.addReview);
 
 router.get("/:bookId/reviews", ReviewController.getReviews);
