@@ -24,13 +24,12 @@ const bookSchema = new Schema(
       required: true,
     },
     coverImage: {
-      data: Buffer,
-      contentType: String,
+      type: String,
+      required: true,
     },
     pdf: {
-      filename: String,
-      data: Buffer,
-      contentType: String,
+      type: String,
+      required: true,
     },
     ratings: {
       averageRating: {

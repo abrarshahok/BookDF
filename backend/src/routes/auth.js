@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
-const AuthController = require("../controllers/auth-controller");
-const authValidator = require("../validators/auth-validator");
+const AuthController = require("../controllers/auth-controller.js");
+const authValidator = require("../validators/auth-validator.js");
 const {
   validationResultHandler,
-} = require("../validators/validation-result-handler");
+} = require("../validators/validation-result-handler.js");
 const isAuth = require("../middlewares/is-auth.js");
-const upload = require("../middlewares/file-upload");
+const upload = require("../middlewares/file-upload.js");
 
 router.post(
   "/signup",

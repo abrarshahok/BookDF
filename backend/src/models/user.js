@@ -15,9 +15,8 @@ const userSchema = new Schema({
     required: true,
   },
   pic: {
-    fileName: String,
-    data: Buffer,
-    contentType: String,
+    type: String,
+    required: true,
   },
   libray: [
     {

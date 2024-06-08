@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const convertToBase64String = require("../utils/to-base64-string");
 
 class AuthController {
   static signup = async (req, res, next) => {
@@ -9,15 +10,14 @@ class AuthController {
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
+      const picData = req.files["pic"][0];
+      const picURL = convertToBase64String(picData);
+
       const user = User({
         username: username,
         email: email,
         password: hashedPassword,
-        pic: {
-          filename: req.files["pic"][0].originalname,
-          data: req.files["pic"][0].buffer,
-          contentType: req.files["pic"][0].mimetype,
-        },
+        pic: picURL,
       });
 
       await user.save();
@@ -80,7 +80,10 @@ class AuthController {
           .send({ success: false, message: "User not found!" });
       }
 
-      return res.status(200).send({ success: true, user: user });
+      return res.status(200).send({
+        success: true,
+        user: { username: user.username, email: user.email, pic: user.pic },
+      });
     } catch (error) {
       res.status(500).json({
         success: false,

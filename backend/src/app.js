@@ -5,9 +5,9 @@ const fs = require("fs");
 const bodyParser = require("body-parser");
 const path = require("path");
 const app = express();
-const bookRoutes = require("./src/routes/book");
-const authRoutes = require("./src/routes/auth");
-const isAuth = require("./src/middlewares/is-auth");
+const bookRoutes = require("./routes/book");
+const authRoutes = require("./routes/auth");
+const isAuth = require("./middlewares/is-auth");
 require("dotenv").config();
 
 app.use(bodyParser.json());
@@ -29,8 +29,6 @@ const accessLogStream = fs.createWriteStream(
 );
 
 app.use(morgan("combined", { stream: accessLogStream }));
-
-app.get("/", (req, res) => res.send("Express on Vercel"));
 
 app.use("/auth", authRoutes);
 app.use("/books", isAuth, bookRoutes);

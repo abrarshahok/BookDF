@@ -1,10 +1,21 @@
 const Book = require("../models/book");
 const User = require("../models/user");
 
+const generateBase64String = require("../utils/to-base64-string");
+const pdfPageCounter = require("../utils/pdf-page-counter");
+
 class BookController {
   static addBook = async (req, res, next) => {
     try {
-      const { title, author, description, genre, pages } = req.body;
+      const { title, author, description, genre } = req.body;
+
+      const coverImageData = req.files["coverImage"][0];
+      const coverImageURL = generateBase64String(coverImageData);
+
+      const pdfData = req.files["pdf"][0];
+      const pdfURL = generateBase64String(pdfData);
+
+      const pages = await pdfPageCounter(pdfData);
 
       const newBook = new Book({
         title,
@@ -12,16 +23,9 @@ class BookController {
         description,
         genre,
         pages,
-        coverImage: {
-          data: req.files["coverImage"][0].buffer,
-          contentType: req.files["coverImage"][0].mimetype,
-        },
+        coverImage: coverImageURL,
         creator: req.userId,
-        pdf: {
-          filename: req.files["pdf"][0].originalname,
-          data: req.files["pdf"][0].buffer,
-          contentType: req.files["pdf"][0].mimetype,
-        },
+        pdf: pdfURL,
         ratings: {
           averageRating: 0,
           numberOfRatings: 0,
@@ -50,7 +54,11 @@ class BookController {
 
   static updateBook = async (req, res, next) => {
     try {
-      const { bookId, title, author, description, genre, pages } = req.body;
+      const { bookId, title, author, description, genre } = req.body;
+
+      const coverImageData = req.files["coverImage"][0];
+
+      const pdfData = req.files["pdf"][0];
 
       const book = await Book.findById(bookId);
 
@@ -75,21 +83,14 @@ class BookController {
 
       if (genre) book.genre = genre;
 
-      if (pages) book.pages = pages;
-
-      if (req.files["coverImage"]) {
-        book.coverImage = {
-          data: req.files["coverImage"][0].buffer,
-          contentType: req.files["coverImage"][0].mimetype,
-        };
+      if (coverImageData) {
+        const coverImageURL = generateBase64String(coverImageData);
+        book.coverImage = coverImageURL;
       }
 
-      if (req.files["pdf"]) {
-        book.pdf = {
-          filename: req.files["pdf"][0].originalname,
-          data: req.files["pdf"][0].buffer,
-          contentType: req.files["pdf"][0].mimetype,
-        };
+      if (pdfData) {
+        const pdfURL = generateBase64String(pdfData);
+        book.pdf = pdfURL;
       }
 
       await book.save();
