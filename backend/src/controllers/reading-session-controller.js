@@ -1,5 +1,6 @@
 const ReadingSession = require("../models/reading-session");
 const User = require("../models/user");
+const Book = require("../models/book");
 
 class ReadingSessionController {
   static createSession = async (req, res) => {
@@ -10,8 +11,6 @@ class ReadingSessionController {
         bookId: bookId,
         userId: req.userId,
       });
-
-      console.log(isFound);
 
       if (isFound) {
         return res.status(404).json({ message: "Session already available" });
@@ -29,7 +28,7 @@ class ReadingSessionController {
 
       console.log(user);
 
-      user.currentReadings.push(session);
+      user.currentReadings.push(bookId);
 
       await user.save();
 
@@ -57,12 +56,6 @@ class ReadingSessionController {
         return res.status(404).json({
           message:
             "New current page cannot be less than or equal old current page",
-        });
-      }
-
-      if (currentPage > session.currentPage + 1) {
-        return res.status(404).json({
-          message: "Cannot increment page by 2",
         });
       }
 
@@ -95,6 +88,41 @@ class ReadingSessionController {
       }
 
       res.status(200).json({ success: true, session: session });
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  };
+
+  static getSessions = async (req, res) => {
+    try {
+      const userId = req.userId;
+
+      const user = await User.findById(userId);
+
+      // Aggregate to combine sessions with their respective books
+      const sessions = await ReadingSession.aggregate([
+        {
+          $match: {
+            bookId: { $in: user.currentReadings },
+          },
+        },
+        {
+          $lookup: {
+            from: "books",
+            localField: "bookId",
+            foreignField: "_id",
+            as: "bookDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$bookDetails",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      ]);
+
+      res.status(200).json({ success: true, sessions });
     } catch (err) {
       res.status(400).json({ message: err.message });
     }

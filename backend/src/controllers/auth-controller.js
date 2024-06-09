@@ -89,6 +89,7 @@ class AuthController {
           pic: user.pic,
           libray: user.libray,
           bookmarks: user.bookmarks,
+          currentReadings: user.currentReadings,
         },
       });
     } catch (error) {
