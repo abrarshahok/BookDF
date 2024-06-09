@@ -7,6 +7,8 @@ const path = require("path");
 const app = express();
 const bookRoutes = require("./routes/book");
 const authRoutes = require("./routes/auth");
+const readingSessions = require("./routes/reading-session");
+
 const isAuth = require("./middlewares/is-auth");
 require("dotenv").config();
 
@@ -32,6 +34,7 @@ app.use(morgan("combined", { stream: accessLogStream }));
 
 app.use("/auth", authRoutes);
 app.use("/books", isAuth, bookRoutes);
+app.use("/readingSessions", isAuth, readingSessions);
 
 mongoose
   .connect(process.env.DB_URL)

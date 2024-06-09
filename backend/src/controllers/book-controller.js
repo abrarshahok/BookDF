@@ -7,17 +7,17 @@ const pdfPageCounter = require("../utils/pdf-page-counter");
 
 class BookController {
   static addBook = async (req, res, next) => {
+    const { title, author, description, genre } = req.body;
+
+    const coverImageData = req.files["coverImage"][0];
+    const coverImageURL = generateBase64String(coverImageData);
+
+    const pdfData = req.files["pdf"][0];
+    const pdfURL = generateBase64String(pdfData);
+
+    const pages = await pdfPageCounter(pdfData);
+
     try {
-      const { title, author, description, genre } = req.body;
-
-      const coverImageData = req.files["coverImage"][0];
-      const coverImageURL = generateBase64String(coverImageData);
-
-      const pdfData = req.files["pdf"][0];
-      const pdfURL = generateBase64String(pdfData);
-
-      const pages = await pdfPageCounter(pdfData);
-
       const newBook = new Book({
         title,
         author,
@@ -54,13 +54,13 @@ class BookController {
   };
 
   static updateBook = async (req, res, next) => {
+    const { bookId, title, author, description, genre } = req.body;
+
+    const coverImageData = req.files["coverImage"][0];
+
+    const pdfData = req.files["pdf"][0];
+
     try {
-      const { bookId, title, author, description, genre } = req.body;
-
-      const coverImageData = req.files["coverImage"][0];
-
-      const pdfData = req.files["pdf"][0];
-
       const book = await Book.findById(bookId);
 
       if (!book) {
@@ -109,9 +109,9 @@ class BookController {
   };
 
   static deleteBook = async (req, res, next) => {
-    try {
-      const { bookId } = req.params;
+    const { bookId } = req.params;
 
+    try {
       const book = await Book.findById(bookId);
 
       if (!book) {
@@ -156,9 +156,9 @@ class BookController {
   };
 
   static getBook = async (req, res, next) => {
-    try {
-      const { bookId } = req.body;
+    const { bookId } = req.body;
 
+    try {
       const book = await Book.findById(bookId);
 
       if (!book) {

@@ -5,19 +5,19 @@ const convertToBase64String = require("../utils/to-base64-string");
 
 class AuthController {
   static signup = async (req, res, next) => {
-    try {
-      const { username, email, password } = req.body;
+    const { username, email, password } = req.body;
 
+    try {
       const hashedPassword = await bcrypt.hash(password, 12);
 
       const picData = req.files["pic"][0];
-      const picURL = convertToBase64String(picData);
+      const picBase64String = convertToBase64String(picData);
 
       const user = User({
         username: username,
         email: email,
         password: hashedPassword,
-        pic: picURL,
+        pic: picBase64String,
       });
 
       await user.save();
@@ -33,9 +33,9 @@ class AuthController {
   };
 
   static signin = async (req, res, next) => {
-    try {
-      const { email, password } = req.body;
+    const { email, password } = req.body;
 
+    try {
       const user = await User.findOne({ email: email });
 
       if (!user) {
@@ -82,7 +82,14 @@ class AuthController {
 
       return res.status(200).send({
         success: true,
-        user: { username: user.username, email: user.email, pic: user.pic },
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          pic: user.pic,
+          libray: user.libray,
+          bookmarks: user.bookmarks,
+        },
       });
     } catch (error) {
       res.status(500).json({

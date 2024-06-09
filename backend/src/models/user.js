@@ -18,6 +18,12 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  currentReadings: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "ReadingSession",
+    },
+  ],
   libray: [
     {
       type: Schema.Types.ObjectId,

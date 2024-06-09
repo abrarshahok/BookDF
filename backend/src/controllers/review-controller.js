@@ -3,9 +3,10 @@ const Book = require("../models/book");
 
 class ReviewController {
   static addReview = async (req, res, next) => {
+    const { rating, reviewText } = req.body;
+    const { bookId } = req.params;
+
     try {
-      const { rating, reviewText } = req.body;
-      const { bookId } = req.params;
       const newReview = new Review({
         user: req.userId,
         reviewText: reviewText,
@@ -39,10 +40,10 @@ class ReviewController {
   };
 
   static deleteReview = async (req, res, next) => {
-    try {
-      const { reviewId } = req.body;
-      const { bookId } = req.params;
+    const { reviewId } = req.body;
+    const { bookId } = req.params;
 
+    try {
       const review = await Review.findById(reviewId);
 
       if (!review) {
@@ -87,9 +88,9 @@ class ReviewController {
   };
 
   static getReviews = async (req, res, next) => {
-    try {
-      const { bookId } = req.params;
+    const { bookId } = req.params;
 
+    try {
       const book = await Book.findById(bookId);
 
       if (!book) {
