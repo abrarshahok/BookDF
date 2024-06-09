@@ -35,7 +35,7 @@ class _CategoryBookContainerState extends State<CategoryBookContainer> {
 
   Future<void> _updatePalette() async {
     isLoading = true;
-    bytes = base64Decode(widget.book.coverImage.split(',').last);
+    bytes = base64Decode(widget.book.coverImage!.split(',').last);
     final PaletteGenerator paletteGenerator =
         await PaletteGenerator.fromImageProvider(MemoryImage(bytes));
 
@@ -84,7 +84,7 @@ class _CategoryBookContainerState extends State<CategoryBookContainer> {
                 SizedBox(
                   width: 120,
                   child: Text(
-                    widget.book.title,
+                    widget.book.title!,
                     style: titleStyle,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -97,7 +97,7 @@ class _CategoryBookContainerState extends State<CategoryBookContainer> {
                 ),
                 gapW4,
                 Text(
-                  widget.book.ratings.averageRating.toStringAsPrecision(2),
+                  widget.book.ratings!.averageRating.toStringAsPrecision(2),
                   style: secondaryLightStyle.copyWith(fontSize: 12),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -106,7 +106,7 @@ class _CategoryBookContainerState extends State<CategoryBookContainer> {
             SizedBox(
               width: 120,
               child: Text(
-                widget.book.author,
+                widget.book.author!,
                 style: secondaryStyle,
                 overflow: TextOverflow.ellipsis,
               ),

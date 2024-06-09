@@ -8,11 +8,13 @@ import '/components/custom_app_top_bar.dart';
 class BookPdfViewScreen extends StatelessWidget {
   final String path;
   final String bookName;
+  final int currentPage;
 
   const BookPdfViewScreen({
     super.key,
     required this.path,
     required this.bookName,
+    this.currentPage = 1,
   });
 
   @override
@@ -25,7 +27,7 @@ class BookPdfViewScreen extends StatelessWidget {
       ),
       body: PDFView(
         filePath: path,
-        defaultPage: 5,
+        defaultPage: currentPage,
         enableSwipe: true,
         fitEachPage: true,
         swipeHorizontal: true,

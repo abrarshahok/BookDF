@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:bookdf/config/http_config.dart';
-import 'package:bookdf/features/book/data/models/book.dart';
 import 'package:dartz/dartz.dart';
+import '/config/http_config.dart';
+import '/features/book/data/models/book.dart';
 // import 'package:http/http.dart' as http;
 
 class BookRepository {
   BookRepository._();
 
   static final BookRepository instance = BookRepository._();
+
+  List<Book> _books = [];
+  List<Book> get books => _books;
 
   Future<Either<String, List<Book>>> fetchBooks(String jwt) async {
     try {
@@ -26,6 +29,7 @@ class BookRepository {
         final List<Book> bookData = (responseData['books'] as List<dynamic>)
             .map((book) => Book.fromJson(book))
             .toList();
+        _books = bookData;
         return Right(bookData);
       }
 

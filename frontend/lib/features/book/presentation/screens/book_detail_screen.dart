@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:palette_generator/palette_generator.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:auto_route/auto_route.dart';
 
+import '../../../../utils/save_base64_pdf.dart';
 import '/components/custom_button.dart';
 import '/components/custom_icon_button.dart';
 import '/constants/app_images.dart';
@@ -29,12 +28,12 @@ class BookDetailsScreen extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           BookDetailsAppBar(
-            coverImage: book.coverImage,
+            coverImage: book.coverImage!,
           ),
           SliverToBoxAdapter(
             child: BookTitleAndAuthor(
-              bookTitle: book.title,
-              bookAuthor: book.author,
+              bookTitle: book.title!,
+              bookAuthor: book.author!,
             ),
           ),
           SliverToBoxAdapter(
@@ -43,7 +42,7 @@ class BookDetailsScreen extends StatelessWidget {
           )),
           SliverToBoxAdapter(
               child: BookDescription(
-            description: book.description,
+            description: book.description!,
           )),
           // const SliverToBoxAdapter(child: ReviewsSection()),
         ],
@@ -70,13 +69,13 @@ class BookDetailsScreen extends StatelessWidget {
               label: 'Start Reading',
               textStyle: buttonStyle,
               onPressed: () {
-                final fileName = book.title.replaceAll(' ', '-') + book.id!;
-                final base64Pdf = book.pdf.split(',').last;
+                final fileName = book.title!.replaceAll(' ', '-') + book.id!;
+                final base64Pdf = book.pdf!.split(',').last;
                 log(fileName);
                 saveBase64Pdf(base64Pdf, fileName).then((path) {
                   log(path);
-                  return context.router
-                      .push(BookPdfViewRoute(path: path, bookName: book.title));
+                  return context.router.push(
+                      BookPdfViewRoute(path: path, bookName: book.title!));
                 }).catchError((err) {
                   log(err.toString());
                   throw err;
@@ -87,23 +86,6 @@ class BookDetailsScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<String> saveBase64Pdf(String base64Pdf, String fileName) async {
-    try {
-      Uint8List bytes = base64Decode(base64Pdf);
-      Directory directory = await getApplicationDocumentsDirectory();
-      String path = '${directory.path}/$fileName';
-      File file = File(path);
-      if (file.existsSync()) {
-        return path;
-      } else {
-        await file.writeAsBytes(bytes);
-        return path;
-      }
-    } catch (e) {
-      throw Exception("Error saving PDF: $e");
-    }
   }
 }
 
@@ -239,7 +221,7 @@ class RatingSection extends StatelessWidget {
           ),
           gapW4,
           Text(
-            book.ratings.averageRating.toStringAsPrecision(2),
+            book.ratings!.averageRating.toStringAsPrecision(2),
             style: secondaryStyle.copyWith(
               fontSize: 12,
               fontWeight: FontWeight.bold,
@@ -248,7 +230,7 @@ class RatingSection extends StatelessWidget {
           ),
           const Spacer(),
           Text(
-            book.genre,
+            book.genre!,
             style: secondaryStyle.copyWith(
               fontSize: 12,
               fontWeight: FontWeight.bold,

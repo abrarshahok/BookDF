@@ -8,15 +8,15 @@ part 'book.g.dart';
 class Book with _$Book {
   const factory Book({
     @JsonKey(name: '_id') String? id,
-    required String title,
-    required String author,
-    required String description,
-    required String genre,
-    required int pages,
-    required String coverImage,
-    required String pdf,
-    required Ratings ratings,
-    required List<String> reviews,
+    String? title,
+    String? author,
+    String? description,
+    String? genre,
+    int? pages,
+    String? coverImage,
+    String? pdf,
+    Ratings? ratings,
+    List<dynamic>? reviews,
   }) = _Book;
 
   factory Book.fromJson(Map<String, dynamic> json) => _$BookFromJson(json);

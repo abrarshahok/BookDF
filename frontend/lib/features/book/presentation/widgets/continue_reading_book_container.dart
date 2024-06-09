@@ -1,24 +1,27 @@
-import 'package:bookdf/components/animated_slider.dart';
-import 'package:bookdf/components/custom_border_button.dart';
-import 'package:bookdf/constants/app_colors.dart';
-import 'package:bookdf/constants/app_font_styles.dart';
-import 'package:bookdf/constants/app_sizes.dart';
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:auto_route/auto_route.dart';
+import 'package:bookdf/routes/app_router.gr.dart';
+
+import '../../../../utils/save_base64_pdf.dart';
+import '/components/animated_slider.dart';
+import '/components/custom_border_button.dart';
+import '/constants/app_colors.dart';
+import '/constants/app_font_styles.dart';
+import '/constants/app_sizes.dart';
+import '/features/book/data/models/reading_session.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:palette_generator/palette_generator.dart';
 
 class ContinueReadingBookContainer extends StatefulWidget {
   const ContinueReadingBookContainer({
     super.key,
-    required this.title,
-    required this.author,
-    required this.imageUrl,
-    required this.readingProgress,
+    required this.readingSession,
   });
 
-  final String title;
-  final String author;
-  final String imageUrl;
-  final double readingProgress;
+  final ReadingSession readingSession;
 
   @override
   State<ContinueReadingBookContainer> createState() =>
@@ -29,6 +32,7 @@ class _ContinueReadingBookContainerState
     extends State<ContinueReadingBookContainer> {
   Color? dominantColor;
   bool isLoading = false;
+  late Uint8List bytes;
 
   @override
   void initState() {
@@ -38,9 +42,11 @@ class _ContinueReadingBookContainerState
 
   Future<void> _updatePalette() async {
     isLoading = true;
+    bytes = base64Decode(
+        widget.readingSession.bookDetails.coverImage!.split(',').last);
     final PaletteGenerator paletteGenerator =
         await PaletteGenerator.fromImageProvider(
-      NetworkImage(widget.imageUrl),
+      MemoryImage(bytes),
     );
 
     if (mounted) {
@@ -54,6 +60,9 @@ class _ContinueReadingBookContainerState
 
   @override
   Widget build(BuildContext context) {
+    final progressValue =
+        (widget.readingSession.currentPage / widget.readingSession.totalPages) *
+            100;
     return SizedBox(
       height: 144,
       width: 290,
@@ -73,8 +82,8 @@ class _ContinueReadingBookContainerState
             ),
             child: isLoading
                 ? null
-                : Image.network(
-                    widget.imageUrl,
+                : Image.memory(
+                    bytes,
                     fit: BoxFit.contain,
                   ),
           ),
@@ -85,24 +94,38 @@ class _ContinueReadingBookContainerState
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  widget.title,
+                  widget.readingSession.bookDetails.title!,
                   style: titleStyle,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  widget.author,
+                  widget.readingSession.bookDetails.author!,
                   style: secondaryStyle,
                   overflow: TextOverflow.ellipsis,
                 ),
                 gapH12,
-                AnimatedSlider(currentValue: widget.readingProgress),
+                AnimatedSlider(currentValue: progressValue),
                 gapH16,
                 CustomBorderButton(
                   label: 'Continue...',
                   height: 29,
                   width: 109,
                   borderRadius: 8,
-                  onPressed: () {},
+                  onPressed: () {
+                    final book = widget.readingSession.bookDetails;
+                    final fileName =
+                        book.title!.replaceAll(' ', '-') + book.id!;
+                    final base64Pdf = book.pdf!.split(',').last;
+
+                    saveBase64Pdf(base64Pdf, fileName).then((path) {
+                      return context.router.push(BookPdfViewRoute(
+                          path: path,
+                          bookName: book.title!,
+                          currentPage: widget.readingSession.currentPage));
+                    }).catchError((err) {
+                      throw err;
+                    });
+                  },
                 ),
               ],
             ),

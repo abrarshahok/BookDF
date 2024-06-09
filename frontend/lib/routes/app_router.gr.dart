@@ -57,6 +57,7 @@ abstract class $AppRouter extends _i6.RootStackRouter {
           key: args.key,
           path: args.path,
           bookName: args.bookName,
+          currentPage: args.currentPage,
         ),
       );
     },
@@ -142,6 +143,7 @@ class BookPdfViewRoute extends _i6.PageRouteInfo<BookPdfViewRouteArgs> {
     _i7.Key? key,
     required String path,
     required String bookName,
+    int currentPage = 1,
     List<_i6.PageRouteInfo>? children,
   }) : super(
           BookPdfViewRoute.name,
@@ -149,6 +151,7 @@ class BookPdfViewRoute extends _i6.PageRouteInfo<BookPdfViewRouteArgs> {
             key: key,
             path: path,
             bookName: bookName,
+            currentPage: currentPage,
           ),
           initialChildren: children,
         );
@@ -164,6 +167,7 @@ class BookPdfViewRouteArgs {
     this.key,
     required this.path,
     required this.bookName,
+    this.currentPage = 1,
   });
 
   final _i7.Key? key;
@@ -172,9 +176,11 @@ class BookPdfViewRouteArgs {
 
   final String bookName;
 
+  final int currentPage;
+
   @override
   String toString() {
-    return 'BookPdfViewRouteArgs{key: $key, path: $path, bookName: $bookName}';
+    return 'BookPdfViewRouteArgs{key: $key, path: $path, bookName: $bookName, currentPage: $currentPage}';
   }
 }
 
