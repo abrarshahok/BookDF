@@ -1,49 +1,40 @@
-import 'dart:developer';
-
-import 'package:auto_route/auto_route.dart';
+import 'package:bookdf/dependency_injection/dependency_injection.dart';
+import 'package:bookdf/features/auth/data/respository/auth_respository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../constants/app_font_styles.dart';
 import '../../../../providers/book_respository_provider.dart';
 import '../../../../states/load_state.dart';
+import '../../data/models/book.dart';
 import '../widgets/book_container.dart';
 
-@RoutePage()
-class AllBooksScreen extends StatefulWidget {
-  const AllBooksScreen({
-    super.key,
-  });
-
-  @override
-  State<AllBooksScreen> createState() => _AllBooksScreenState();
-}
-
-class _AllBooksScreenState extends State<AllBooksScreen> {
-  @override
-  void initState() {
-    Provider.of<BookRepositoryProvider>(context, listen: false).fetchBooks();
-    super.initState();
-  }
+class AllBooksScreen extends StatelessWidget {
+  const AllBooksScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final jwt = AuthRepository.instance.jwt;
+    locator<BookRepositoryProvider>().fetchBooks(jwt!);
     return Consumer<BookRepositoryProvider>(
       builder: (context, provider, _) {
         final state = provider.state;
         if (state is LoadingState) {
           return const SliverToBoxAdapter(
-            child: Center(
-              child: SizedBox(
-                height: 50,
-                width: 50,
-                child: CircularProgressIndicator(),
-              ),
-            ),
+            child: Loading(),
           );
         } else if (state is SuccessState) {
-          final books = state.data;
-          log(books.length.toString());
+          final books = state.data as List<Book>;
+          if (books.isEmpty) {
+            return SliverToBoxAdapter(
+              child: Center(
+                child: Text(
+                  'No books found!',
+                  style: secondaryStyle,
+                ),
+              ),
+            );
+          }
           return SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
@@ -91,17 +82,48 @@ class _AllBooksScreenState extends State<AllBooksScreen> {
           );
         } else if (state is ErrorState) {
           return SliverToBoxAdapter(
-            child: Center(
-              child: Text(
-                state.errorMessage,
-                style: secondaryStyle,
-              ),
-            ),
+            child: CustomErrorWidget(errorMessage: state.errorMessage),
           );
         } else {
           return const SliverToBoxAdapter(child: SizedBox());
         }
       },
+    );
+  }
+}
+
+class CustomErrorWidget extends StatelessWidget {
+  const CustomErrorWidget({
+    super.key,
+    required this.errorMessage,
+  });
+
+  final String errorMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        errorMessage,
+        style: secondaryStyle,
+      ),
+    );
+  }
+}
+
+class Loading extends StatelessWidget {
+  const Loading({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: SizedBox(
+        height: 50,
+        width: 50,
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

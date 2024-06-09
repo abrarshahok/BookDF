@@ -8,10 +8,10 @@ class BookRepositoryProvider with ChangeNotifier {
   LoadState _state = InitialState();
   LoadState get state => _state;
 
-  void fetchBooks() async {
+  void fetchBooks(String jwt) async {
     _setState(LoadingState(), build: false);
 
-    final result = await BookRepository.instance.fetchBooks();
+    final result = await BookRepository.instance.fetchBooks(jwt);
 
     result.fold(
       (error) => _setState(ErrorState(error)),

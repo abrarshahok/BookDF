@@ -1,3 +1,4 @@
+import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/utils/providers.dart';
@@ -20,7 +21,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: providers,
       child: MaterialApp.router(
-        routerConfig: appRouter.config(),
+        routerConfig: appRouter.config(
+          navigatorObservers: () => [ChuckerFlutter.navigatorObserver],
+        ),
         debugShowCheckedModeBanner: false,
       ),
     );

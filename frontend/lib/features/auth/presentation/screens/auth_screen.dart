@@ -1,11 +1,11 @@
 import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
-import 'package:bookdf/constants/app_colors.dart';
-import 'package:bookdf/constants/app_font_styles.dart';
-import 'package:bookdf/dependency_injection/dependency_injection.dart';
-import 'package:bookdf/states/load_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '/constants/app_colors.dart';
+import '/constants/app_font_styles.dart';
+import '/dependency_injection/dependency_injection.dart';
+import '/states/load_state.dart';
 import '../../../../components/custom_button.dart';
 import '../../../../components/custom_text_form_field.dart';
 import '../../../../providers/auth_repository_provider.dart';

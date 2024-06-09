@@ -9,10 +9,15 @@ class BookRepository {
 
   static final BookRepository instance = BookRepository._();
 
-  Future<Either<String, List<Book>>> fetchBooks() async {
+  Future<Either<String, List<Book>>> fetchBooks(String jwt) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/books'),
-          headers: {'Content-Type': 'application/json'});
+      final response = await http.get(
+        Uri.parse('$baseUrl/books'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwt'
+        },
+      );
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);

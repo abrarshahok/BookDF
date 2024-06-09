@@ -1,64 +1,40 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:bookdf/features/auth/presentation/screens/auth_screen.dart';
+import 'package:bookdf/features/home/presentation/screens/all_books_screen.dart';
+import 'package:bookdf/states/load_state.dart';
 import 'package:flutter/material.dart';
-import 'package:feather_icons/feather_icons.dart';
-import 'package:dot_curved_bottom_nav/dot_curved_bottom_nav.dart';
-import '/constants/app_colors.dart';
-import '/features/home/presentation/screens/home_page.dart';
+import 'package:provider/provider.dart';
+import '/dependency_injection/dependency_injection.dart';
+import '/providers/auth_repository_provider.dart';
+import 'home_page.dart';
 
-class AppScreen extends StatefulWidget {
+@RoutePage()
+class AppScreen extends StatelessWidget {
   const AppScreen({super.key});
 
   @override
-  State<AppScreen> createState() => _AppScreenState();
-}
-
-class _AppScreenState extends State<AppScreen> {
-  int _currentPage = 0;
-  final ScrollController _scrollController = ScrollController();
-  @override
   Widget build(BuildContext context) {
+    locator<AuthRepositoryProvider>().autologin();
     return Scaffold(
-      body: HomePage(scrollController: _scrollController),
-      bottomNavigationBar: DotCurvedBottomNav(
-        indicatorColor: secondaryColor,
-        backgroundColor: Colors.transparent,
-        hideOnScroll: true,
-        scrollController: _scrollController,
-        animationDuration: const Duration(milliseconds: 300),
-        animationCurve: Curves.ease,
-        selectedIndex: _currentPage,
-        indicatorSize: 5,
-        borderRadius: 25,
-        height: 40,
-        margin: const EdgeInsets.only(bottom: 20, top: 10),
-        onTap: (index) {
-          setState(() => _currentPage = index);
+      body: Consumer<AuthRepositoryProvider>(
+        builder: (context, auth, _) {
+          final state = auth.state;
+          if (state is LoadingState) {
+            return const Loading();
+          } else if (state is SuccessState) {
+            final bool isAuth = state.data as bool;
+
+            if (isAuth) {
+              return const HomePage();
+            } else {
+              return const AuthScreen();
+            }
+          } else if (state is ErrorState) {
+            return CustomErrorWidget(errorMessage: state.errorMessage);
+          } else {
+            return const SizedBox();
+          }
         },
-        items: [
-          Icon(
-            FeatherIcons.home,
-            color: _currentPage == 0
-                ? secondaryColor
-                : primaryColor.withOpacity(0.5),
-          ),
-          Icon(
-            FeatherIcons.search,
-            color: _currentPage == 1
-                ? secondaryColor
-                : primaryColor.withOpacity(0.5),
-          ),
-          Icon(
-            FeatherIcons.bookmark,
-            color: _currentPage == 2
-                ? secondaryColor
-                : primaryColor.withOpacity(0.5),
-          ),
-          Icon(
-            FeatherIcons.user,
-            color: _currentPage == 3
-                ? secondaryColor
-                : primaryColor.withOpacity(0.5),
-          ),
-        ],
       ),
     );
   }

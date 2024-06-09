@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
-import 'package:bookdf/routes/app_router.gr.dart';
-import 'package:bookdf/states/load_state.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import '/features/auth/data/respository/auth_respository.dart';
+import '/routes/app_router.gr.dart';
+import '/states/load_state.dart';
 
 // Enum for Auth Mode
 enum AuthMode { signup, login }
@@ -48,7 +48,7 @@ class AuthRepositoryProvider extends ChangeNotifier {
       (error) => _setState(ErrorState('Failed to Login')),
       (success) {
         _setState(SuccessState(success));
-        context.router.replace(const AllBooksRoute());
+        context.router.replace(const HomeRoute());
       },
     );
   }
@@ -112,14 +112,27 @@ class AuthRepositoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void autologin() async {
+    _setState(LoadingState(), build: false);
+
+    final result = await AuthRepository.instance.autoLogin();
+
+    result.fold(
+      (error) => _setState(ErrorState(error.message)),
+      (success) => _setState(SuccessState(success)),
+    );
+  }
+
   // Sign out method
   void signOut() {
     // Sign out logic here
   }
 
   // Private method to set state and notify listeners
-  void _setState(LoadState state) {
+  void _setState(LoadState state, {bool build = true}) {
     _state = state;
-    notifyListeners();
+    if (build) {
+      notifyListeners();
+    }
   }
 }

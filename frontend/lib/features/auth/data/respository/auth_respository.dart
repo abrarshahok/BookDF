@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:bookdf/features/auth/data/models/user.dart';
 import 'package:dartz/dartz.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
@@ -13,6 +14,14 @@ class AuthRepository {
   AuthRepository._();
 
   static final AuthRepository instance = AuthRepository._();
+
+  String? _jwt;
+
+  String? get jwt => _jwt;
+
+  User? _currentUser;
+
+  User? get currentUser => _currentUser;
 
   Future<Either<Failure, bool>> signup({
     required String username,
@@ -86,7 +95,15 @@ class AuthRepository {
 
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
-        log(responseBody.toString());
+
+        _jwt = responseBody['jwt'];
+
+        final prefs = await SharedPreferences.getInstance();
+
+        await prefs.setString('jwt', _jwt!);
+
+        await getUser(jwt!);
+
         return const Right(true);
       } else {
         return Left(Failure('Signin failed: ${response.statusCode}'));
@@ -94,5 +111,49 @@ class AuthRepository {
     } catch (e) {
       return Left(Failure('Signin error: $e'));
     }
+  }
+
+  Future<Either<Failure, bool>> getUser(String jwt) async {
+    try {
+      final uri = Uri.parse('$baseUrl/auth/get-user/');
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwt'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        _currentUser = User.fromJson(responseBody['user']);
+        return const Right(true);
+      } else {
+        return Left(Failure('Signin failed: ${response.statusCode}'));
+      }
+    } catch (e) {
+      return Left(Failure('Signin error: $e'));
+    }
+  }
+
+  Future<Either<Failure, bool>> autoLogin() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _jwt = prefs.getString('jwt');
+      log(_jwt!);
+      if (_jwt != null) {
+        await getUser(jwt!);
+        return const Right(true);
+      } else {
+        return const Right(false);
+      }
+    } catch (_) {
+      return Left(Failure('Something went wrong!'));
+    }
+  }
+
+  Future<void> signOut() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('jwt');
   }
 }

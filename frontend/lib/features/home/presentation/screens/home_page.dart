@@ -1,3 +1,5 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:dot_curved_bottom_nav/dot_curved_bottom_nav.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import '/features/home/presentation/screens/all_books_screen.dart';
@@ -9,9 +11,19 @@ import '/components/custom_icon_button.dart';
 import '/constants/app_font_styles.dart';
 import '/constants/app_colors.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.scrollController});
-  final ScrollController scrollController;
+@RoutePage()
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentPage = 0;
+
+  final ScrollController _scrollController = ScrollController();
+
   final categories = const [
     'All',
     'Romance',
@@ -48,7 +60,7 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: CustomScrollView(
-        controller: scrollController,
+        controller: _scrollController,
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
@@ -126,6 +138,48 @@ class HomePage extends StatelessWidget {
           const SliverPadding(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             sliver: AllBooksScreen(),
+          ),
+        ],
+      ),
+      bottomNavigationBar: DotCurvedBottomNav(
+        indicatorColor: secondaryColor,
+        backgroundColor: Colors.transparent,
+        hideOnScroll: true,
+        scrollController: _scrollController,
+        animationDuration: const Duration(milliseconds: 300),
+        animationCurve: Curves.ease,
+        selectedIndex: _currentPage,
+        indicatorSize: 5,
+        borderRadius: 25,
+        height: 40,
+        margin: const EdgeInsets.only(bottom: 20, top: 10),
+        onTap: (index) {
+          setState(() => _currentPage = index);
+        },
+        items: [
+          Icon(
+            FeatherIcons.home,
+            color: _currentPage == 0
+                ? secondaryColor
+                : primaryColor.withOpacity(0.5),
+          ),
+          Icon(
+            FeatherIcons.search,
+            color: _currentPage == 1
+                ? secondaryColor
+                : primaryColor.withOpacity(0.5),
+          ),
+          Icon(
+            FeatherIcons.bookmark,
+            color: _currentPage == 2
+                ? secondaryColor
+                : primaryColor.withOpacity(0.5),
+          ),
+          Icon(
+            FeatherIcons.user,
+            color: _currentPage == 3
+                ? secondaryColor
+                : primaryColor.withOpacity(0.5),
           ),
         ],
       ),
