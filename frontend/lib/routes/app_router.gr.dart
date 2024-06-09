@@ -12,7 +12,7 @@ import 'package:auto_route/auto_route.dart' as _i6;
 import 'package:bookdf/features/auth/presentation/screens/auth_screen.dart'
     as _i2;
 import 'package:bookdf/features/book/data/models/book.dart' as _i8;
-import 'package:bookdf/features/book/presentation/screens/book_detail_screen.dart'
+import 'package:bookdf/features/book/presentation/screens/book_details_screen.dart'
     as _i3;
 import 'package:bookdf/features/book/presentation/screens/book_pdf_view_screen.dart'
     as _i4;
@@ -57,6 +57,7 @@ abstract class $AppRouter extends _i6.RootStackRouter {
           key: args.key,
           path: args.path,
           bookName: args.bookName,
+          sessionId: args.sessionId,
           currentPage: args.currentPage,
         ),
       );
@@ -143,7 +144,8 @@ class BookPdfViewRoute extends _i6.PageRouteInfo<BookPdfViewRouteArgs> {
     _i7.Key? key,
     required String path,
     required String bookName,
-    int currentPage = 1,
+    required String sessionId,
+    required int currentPage,
     List<_i6.PageRouteInfo>? children,
   }) : super(
           BookPdfViewRoute.name,
@@ -151,6 +153,7 @@ class BookPdfViewRoute extends _i6.PageRouteInfo<BookPdfViewRouteArgs> {
             key: key,
             path: path,
             bookName: bookName,
+            sessionId: sessionId,
             currentPage: currentPage,
           ),
           initialChildren: children,
@@ -167,7 +170,8 @@ class BookPdfViewRouteArgs {
     this.key,
     required this.path,
     required this.bookName,
-    this.currentPage = 1,
+    required this.sessionId,
+    required this.currentPage,
   });
 
   final _i7.Key? key;
@@ -176,11 +180,13 @@ class BookPdfViewRouteArgs {
 
   final String bookName;
 
+  final String sessionId;
+
   final int currentPage;
 
   @override
   String toString() {
-    return 'BookPdfViewRouteArgs{key: $key, path: $path, bookName: $bookName, currentPage: $currentPage}';
+    return 'BookPdfViewRouteArgs{key: $key, path: $path, bookName: $bookName, sessionId: $sessionId, currentPage: $currentPage}';
   }
 }
 

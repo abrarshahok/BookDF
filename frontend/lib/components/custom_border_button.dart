@@ -10,12 +10,14 @@ class CustomBorderButton extends StatelessWidget {
     this.width = double.infinity,
     this.height = 55,
     this.borderRadius = 100,
+    this.textStyle,
   });
   final String label;
   final VoidCallback onPressed;
   final double width;
   final double height;
   final double borderRadius;
+  final TextStyle? textStyle;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -32,7 +34,7 @@ class CustomBorderButton extends StatelessWidget {
         alignment: Alignment.center,
         child: Text(
           label,
-          style: primaryButtonStyle,
+          style: textStyle ?? primaryButtonStyle,
         ),
       ),
     );

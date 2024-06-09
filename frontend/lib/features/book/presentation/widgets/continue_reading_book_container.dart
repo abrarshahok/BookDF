@@ -60,8 +60,10 @@ class _ContinueReadingBookContainerState
 
   @override
   Widget build(BuildContext context) {
-    final progressValue =
-        (widget.readingSession.currentPage / widget.readingSession.totalPages) *
+    final progressValue = widget.readingSession.currentPage == 0.0
+        ? 0.0
+        : (widget.readingSession.currentPage /
+                widget.readingSession.totalPages) *
             100;
     return SizedBox(
       height: 144,
@@ -116,12 +118,15 @@ class _ContinueReadingBookContainerState
                     final fileName =
                         book.title!.replaceAll(' ', '-') + book.id!;
                     final base64Pdf = book.pdf!.split(',').last;
-
                     saveBase64Pdf(base64Pdf, fileName).then((path) {
-                      return context.router.push(BookPdfViewRoute(
+                      return context.router.push(
+                        BookPdfViewRoute(
                           path: path,
+                          sessionId: widget.readingSession.id,
                           bookName: book.title!,
-                          currentPage: widget.readingSession.currentPage));
+                          currentPage: widget.readingSession.currentPage,
+                        ),
+                      );
                     }).catchError((err) {
                       throw err;
                     });

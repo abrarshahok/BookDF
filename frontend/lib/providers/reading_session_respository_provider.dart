@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import '../features/book/data/respository/reading_session_repository.dart';
 import '../states/load_state.dart';
-import '/features/book/data/respository/reading_session_repository.dart';
 
 @lazySingleton
 class ReadingSessionRepositoryProvider with ChangeNotifier {
@@ -17,6 +17,42 @@ class ReadingSessionRepositoryProvider with ChangeNotifier {
     result.fold(
       (error) => _setState(ErrorState(error)),
       (sessions) => _setState(SuccessState(sessions)),
+    );
+  }
+
+  Future<void> createSession(String jwt, String bookId, int totalPages) async {
+    _setState(LoadingState(), build: false);
+
+    final result = await ReadingSessionsRepository.instance.createSession(
+      jwt,
+      bookId,
+      totalPages,
+    );
+
+    result.fold(
+      (error) => _setState(ErrorState(error)),
+      (sessions) => _setState(SuccessState(sessions)),
+    );
+  }
+
+  Future<void> updateSession(
+    String jwt,
+    String sessionId,
+    int currentPage,
+  ) async {
+    _setState(LoadingState(), build: false);
+
+    final result = await ReadingSessionsRepository.instance.updateSession(
+      jwt,
+      sessionId,
+      currentPage,
+    );
+
+    result.fold(
+      (error) => _setState(ErrorState(error)),
+      (updatedSessions) {
+        _setState(SuccessState(updatedSessions));
+      },
     );
   }
 

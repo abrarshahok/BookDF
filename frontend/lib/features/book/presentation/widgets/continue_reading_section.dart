@@ -50,7 +50,6 @@ class _ContinueReadingSectionState extends State<ContinueReadingSection> {
                   'Continue Reading',
                   style: titleStyle,
                 ),
-                gapH12,
                 SizedBox(
                   height: 200,
                   child: ListView.builder(
