@@ -4,7 +4,8 @@ const Book = require("../models/book");
 
 class ReadingSessionController {
   static createSession = async (req, res) => {
-    const { bookId, totalPages } = req.body;
+    const { totalPages } = req.body;
+    const bookId = req.params.bookId;
 
     try {
       const isFound = await ReadingSession.findOne({
@@ -25,14 +26,40 @@ class ReadingSessionController {
       await session.save();
 
       const user = await User.findById(req.userId);
-
-      console.log(user);
-
       user.currentReadings.push(bookId);
-
       await user.save();
 
-      res.status(200).json({ success: true, session: session });
+      const sessionWithBookDetails = await ReadingSession.aggregate([
+        {
+          $match: {
+            _id: session._id,
+          },
+        },
+        {
+          $lookup: {
+            from: "books",
+            localField: "bookId",
+            foreignField: "_id",
+            as: "bookDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$bookDetails",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      ]);
+
+      if (sessionWithBookDetails.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "Session not found after creation" });
+      }
+
+      res
+        .status(200)
+        .json({ success: true, session: sessionWithBookDetails[0] });
     } catch (err) {
       res.status(400).json({ message: err.message });
     }
@@ -45,7 +72,7 @@ class ReadingSessionController {
       const session = await ReadingSession.findById(sessionId);
 
       if (!session) {
-        return res.status(404).json({ message: "Session not found" });
+        return res.status(400).json({ message: "Session not found" });
       }
 
       if (session.userId.toString() !== req.userId) {
@@ -71,25 +98,7 @@ class ReadingSessionController {
 
       res.status(200).json({ success: true, session: session });
     } catch (err) {
-      res.status(400).json({ message: err.message });
-    }
-  };
-
-  static getSession = async (req, res) => {
-    const { bookId } = req.params;
-    try {
-      const session = await ReadingSession.findOne({
-        userId: req.userId,
-        bookId: bookId,
-      });
-
-      if (!session) {
-        return res.status(404).json({ message: "Session not found" });
-      }
-
-      res.status(200).json({ success: true, session: session });
-    } catch (err) {
-      res.status(400).json({ message: err.message });
+      res.status(500).json({ message: err.message });
     }
   };
 
@@ -99,7 +108,6 @@ class ReadingSessionController {
 
       const user = await User.findById(userId);
 
-      // Aggregate to combine sessions with their respective books
       const sessions = await ReadingSession.aggregate([
         {
           $match: {
@@ -124,7 +132,7 @@ class ReadingSessionController {
 
       res.status(200).json({ success: true, sessions });
     } catch (err) {
-      res.status(400).json({ message: err.message });
+      res.status(500).json({ message: err.message });
     }
   };
 }
