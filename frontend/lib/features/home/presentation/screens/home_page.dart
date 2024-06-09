@@ -1,16 +1,13 @@
-import 'package:bookdf/features/home/presentation/state/book_state.dart';
-import 'package:bookdf/providers/book_provider.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../widgets/book_container.dart';
+import '/features/home/presentation/screens/all_books_screen.dart';
 import '/features/home/presentation/widgets/book_category_chip.dart';
+import '/features/home/presentation/widgets/continue_reading_book_container.dart';
 import '/components/custom_text_form_field.dart';
 import '/constants/app_sizes.dart';
 import '/components/custom_icon_button.dart';
 import '/constants/app_font_styles.dart';
 import '/constants/app_colors.dart';
-import '/features/home/presentation/widgets/continue_reading_book_container.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required this.scrollController});
@@ -132,81 +129,6 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class AllBooksScreen extends StatefulWidget {
-  const AllBooksScreen({
-    super.key,
-  });
-
-  @override
-  State<AllBooksScreen> createState() => _AllBooksScreenState();
-}
-
-class _AllBooksScreenState extends State<AllBooksScreen> {
-  @override
-  void initState() {
-    Provider.of<BookProvider>(context, listen: false).fetchBooks();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<BookProvider>(
-      builder: (context, provider, _) {
-        final state = provider.state;
-        if (state is LoadingState) {
-          return const SliverToBoxAdapter(child: CircularProgressIndicator());
-        } else if (state is SuccessState) {
-          return SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 2 / 3,
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 10,
-            ),
-            delegate: SliverChildListDelegate(
-              const [
-                BookContainer(
-                  title: 'The Boy With One Name',
-                  rating: 4.0,
-                  author: 'J.R. Wallis',
-                  imageUrl:
-                      'https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781471157936/the-boy-with-one-name-9781471157936_hr.jpg',
-                ),
-                BookContainer(
-                  title: 'The Name of the Wind',
-                  author: 'Patrick Rothfuss',
-                  imageUrl:
-                      'https://www.thepacer.net/wp-content/uploads/2020/11/91b8oNwaV1L.jpg',
-                  rating: 5.0,
-                ),
-                BookContainer(
-                  title: 'The Book With One Name',
-                  rating: 4.0,
-                  author: 'Anonymous',
-                  imageUrl:
-                      'https://sammicox.wordpress.com/wp-content/uploads/2018/06/the-book-with-no-name-front-cover.jpg',
-                ),
-                SizedBox(height: 100),
-              ],
-            ),
-          );
-        } else if (state is ErrorState) {
-          return SliverToBoxAdapter(
-            child: Center(
-              child: Text(
-                state.errorMessage,
-                style: secondaryStyle,
-              ),
-            ),
-          );
-        } else {
-          return const SliverToBoxAdapter(child: SizedBox());
-        }
-      },
     );
   }
 }

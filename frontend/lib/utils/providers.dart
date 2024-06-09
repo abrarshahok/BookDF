@@ -1,7 +1,11 @@
+import 'package:bookdf/dependency_injection/dependency_injection.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import '../providers/book_provider.dart';
+import '../providers/book_respository_provider.dart';
+import '../providers/auth_repository_provider.dart';
 
 final List<SingleChildWidget> providers = [
-  ChangeNotifierProvider(create: (context) => BookProvider())
+  ChangeNotifierProvider(
+      create: (context) => locator<BookRepositoryProvider>()),
+  ChangeNotifierProvider(create: (context) => locator<AuthRepositoryProvider>())
 ];

@@ -1,7 +1,6 @@
-import 'package:bookdf/constants/app_colors.dart';
-import 'package:bookdf/constants/app_font_styles.dart';
 import 'package:flutter/material.dart';
-
+import '/constants/app_colors.dart';
+import '/constants/app_font_styles.dart';
 import '../constants/app_sizes.dart';
 
 class CustomButton extends StatelessWidget {

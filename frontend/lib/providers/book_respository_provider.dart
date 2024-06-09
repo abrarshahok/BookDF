@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import '../features/home/presentation/state/book_state.dart';
+import 'package:injectable/injectable.dart';
+import '../states/load_state.dart';
 import '/features/home/data/respository/book_repository.dart';
 
-class BookProvider with ChangeNotifier {
-  BookState _state = InitialState();
-  BookState get state => _state;
+@lazySingleton
+class BookRepositoryProvider with ChangeNotifier {
+  LoadState _state = InitialState();
+  LoadState get state => _state;
 
   void fetchBooks() async {
     _setState(LoadingState(), build: false);
@@ -17,7 +19,7 @@ class BookProvider with ChangeNotifier {
     );
   }
 
-  void _setState(BookState newState, {bool build = true}) {
+  void _setState(LoadState newState, {bool build = true}) {
     _state = newState;
     if (build) {
       notifyListeners();

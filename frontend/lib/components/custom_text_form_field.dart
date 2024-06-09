@@ -19,6 +19,7 @@ class CustomTextFormField extends StatelessWidget {
     this.inputType,
     this.prefixIcon,
     this.onSubmitted,
+    this.onSaved,
   });
 
   final String hintText;
@@ -31,6 +32,7 @@ class CustomTextFormField extends StatelessWidget {
   final bool readOnly;
   final VoidCallback? onTap;
   final Function(String)? onSubmitted;
+  final Function(String?)? onSaved;
   final Function(String)? onChanged;
   final int? maxLength;
   final TextInputType? inputType;
@@ -67,6 +69,7 @@ class CustomTextFormField extends StatelessWidget {
         onChanged: onChanged,
         onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
         onFieldSubmitted: onSubmitted,
+        onSaved: onSaved,
       ),
     );
   }

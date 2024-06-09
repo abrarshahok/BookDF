@@ -1,8 +1,10 @@
-import 'package:bookdf/components/custom_button.dart';
-import 'package:bookdf/components/custom_icon_button.dart';
-import 'package:feather_icons/feather_icons.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:feather_icons/feather_icons.dart';
 import 'package:palette_generator/palette_generator.dart';
+import '/components/custom_button.dart';
+import '/components/custom_icon_button.dart';
 import '/constants/app_colors.dart';
 import '/constants/app_font_styles.dart';
 import '/constants/app_sizes.dart';
@@ -12,14 +14,16 @@ class BookContainer extends StatefulWidget {
     super.key,
     required this.title,
     required this.author,
-    required this.imageUrl,
+    required this.base64image,
     required this.rating,
+    required this.bookId,
   });
 
   final String title;
   final String author;
-  final String imageUrl;
+  final String base64image;
   final double rating;
+  final String bookId;
 
   @override
   State<BookContainer> createState() => _BookContainerState();
@@ -27,6 +31,7 @@ class BookContainer extends StatefulWidget {
 
 class _BookContainerState extends State<BookContainer> {
   Color? dominantColor;
+  late Uint8List bytes;
   bool isLoading = false;
 
   @override
@@ -37,10 +42,9 @@ class _BookContainerState extends State<BookContainer> {
 
   Future<void> _updatePalette() async {
     isLoading = true;
+    bytes = base64Decode(widget.base64image.split(',').last);
     final PaletteGenerator paletteGenerator =
-        await PaletteGenerator.fromImageProvider(
-      NetworkImage(widget.imageUrl),
-    );
+        await PaletteGenerator.fromImageProvider(MemoryImage(bytes));
 
     setState(() {
       dominantColor = paletteGenerator.dominantColor?.color ??
@@ -53,6 +57,7 @@ class _BookContainerState extends State<BookContainer> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 275,
+      width: 300,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,8 +75,9 @@ class _BookContainerState extends State<BookContainer> {
             ),
             child: isLoading
                 ? null
-                : Image.network(
-                    widget.imageUrl,
+                : Image.memory(
+                    key: ValueKey(widget.bookId),
+                    bytes,
                     fit: BoxFit.contain,
                   ),
           ),
@@ -94,7 +100,7 @@ class _BookContainerState extends State<BookContainer> {
               ),
               gapW4,
               Text(
-                '${widget.rating}',
+                widget.rating.toStringAsPrecision(2),
                 style: secondaryLightStyle.copyWith(fontSize: 12),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -109,17 +115,19 @@ class _BookContainerState extends State<BookContainer> {
             ),
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomButton(
                 label: 'Check Now',
                 height: 29,
-                width: 109,
+                width: 130,
                 borderRadius: 8,
                 onPressed: () {},
               ),
-              const Spacer(),
+              gapW4,
               CustomIconButton(
                 onTap: () {},
+                size: 30,
                 iconColor: secondaryColor,
                 icon: FeatherIcons.bookmark,
               )

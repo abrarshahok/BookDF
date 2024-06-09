@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/features/home/presentation/screens/app_screen.dart';
 import '/utils/providers.dart';
+import 'routes/app_router.dart';
+import '/dependency_injection/dependency_injection.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
+  configureDependencies();
   runApp(const MyApp());
 }
 
@@ -12,12 +16,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appRouter = AppRouter();
     return MultiProvider(
       providers: providers,
-      child: const MaterialApp(
-        title: 'BookDF',
+      child: MaterialApp.router(
+        routerConfig: appRouter.config(),
         debugShowCheckedModeBanner: false,
-        home: AppScreen(),
       ),
     );
   }
