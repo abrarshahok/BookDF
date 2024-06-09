@@ -38,19 +38,18 @@ class _BookPdfViewScreenState extends State<BookPdfViewScreen> {
   }
 
   void _fetchInitialSession() async {
-    _currentPage = widget.currentPage;
     _initialPage = _currentPage;
+    _currentPage = widget.currentPage;
     log(_initialPage.toString());
   }
 
   void _onPageChanged(int? page, int? total) {
+    _initialPage = _currentPage;
     _currentPage = page!;
-    log(_currentPage.toString());
     _updateSession();
   }
 
   void _updateSession() async {
-    log(_currentPage.toString());
     final jwt = AuthRepository.instance.jwt!;
     final provider = locator<ReadingSessionRepositoryProvider>();
     if (!(_currentPage <= _initialPage)) {
