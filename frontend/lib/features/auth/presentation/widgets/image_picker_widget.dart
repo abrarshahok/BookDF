@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:bookdf/constants/app_colors.dart';
 import 'package:bookdf/constants/app_font_styles.dart';
-import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../providers/auth_repository_provider.dart';
 import 'package:path/path.dart' as path;
@@ -91,7 +91,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
             children: [
               TextButton.icon(
                 icon: const Icon(
-                  FeatherIcons.image,
+                  IconlyLight.image,
                 ),
                 onPressed: _addImage,
                 label: Text(
@@ -101,7 +101,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
               ),
               TextButton.icon(
                 icon: const Icon(
-                  FeatherIcons.camera,
+                  IconlyLight.camera,
                 ),
                 onPressed: _clickImage,
                 label: Text(

@@ -9,15 +9,15 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
   configureDependencies();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
+  final appRouter = AppRouter();
   @override
   Widget build(BuildContext context) {
-    final appRouter = AppRouter();
     return MultiProvider(
       providers: providers,
       child: MaterialApp.router(

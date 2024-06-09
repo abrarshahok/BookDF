@@ -1,6 +1,8 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:bookdf/constants/app_font_styles.dart';
 import 'package:flutter/material.dart';
-
-import 'custom_icon_button.dart';
+import 'package:iconly/iconly.dart';
+import '../constants/app_colors.dart';
 
 AppBar customAppBar({
   bool? centerTitle,
@@ -14,15 +16,19 @@ AppBar customAppBar({
     centerTitle: centerTitle,
     title: Text(
       title ?? '',
-      // style: AppFontStyle.appBarTitleMont.copyWith(
-      //   color: AppColors.primaryVariant,
-      // ),
+      style: titleStyle,
     ),
     leading: (showLeadingButton)
-        ? CustomIconButton(
-            onTap: () {},
-            icon: Icons.arrow_back_ios_new_rounded,
-            // iconColor: AppColors.primaryVariant,
+        ? IconButton(
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStatePropertyAll(secondaryColor.withOpacity(0.4)),
+            ),
+            icon: const Icon(
+              IconlyLight.arrow_left,
+              color: bgColor,
+            ),
+            onPressed: () => context.router.maybePop(),
           )
         : null,
     actions: [

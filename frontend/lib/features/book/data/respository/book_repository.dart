@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:bookdf/config/http_config.dart';
-import 'package:bookdf/features/home/data/models/book.dart';
+import 'package:bookdf/features/book/data/models/book.dart';
 import 'package:dartz/dartz.dart';
 // import 'package:http/http.dart' as http;
 
@@ -30,6 +31,7 @@ class BookRepository {
 
       return const Left('Failed to Load Books');
     } catch (err) {
+      log(err.toString());
       return const Left('Something went wrong!');
     }
   }

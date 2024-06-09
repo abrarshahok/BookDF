@@ -19,18 +19,6 @@ class AuthRepositoryProvider extends ChangeNotifier {
 
   LoadState get state => _state;
 
-  // Fetch user data (example method)
-  Future<void> fetchUserData() async {
-    try {
-      _setState(LoadingState());
-      // Fetch data logic here
-      // _setState(SuccessState(fetchedBooks));
-    } catch (e) {
-      _setState(ErrorState(e.toString()));
-      rethrow;
-    }
-  }
-
   // Login method
   Future<void> signin({
     required String email,
@@ -97,11 +85,6 @@ class AuthRepositoryProvider extends ChangeNotifier {
     }
   }
 
-  // Delete user image method
-  Future<void> _deleteUserImage(String userId) async {
-    // Delete user image logic here
-  }
-
   // Switch auth mode method
   void switchAuthMode() {
     if (authMode == AuthMode.login) {
@@ -124,8 +107,9 @@ class AuthRepositoryProvider extends ChangeNotifier {
   }
 
   // Sign out method
-  void signOut() {
-    // Sign out logic here
+  void signOut(BuildContext context) {
+    AuthRepository.instance.signOut();
+    context.router.replace(const AuthRoute());
   }
 
   // Private method to set state and notify listeners

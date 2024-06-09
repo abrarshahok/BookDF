@@ -7,15 +7,25 @@ import '../../../../constants/app_font_styles.dart';
 import '../../../../providers/book_respository_provider.dart';
 import '../../../../states/load_state.dart';
 import '../../data/models/book.dart';
-import '../widgets/book_container.dart';
+import 'category_book_container.dart';
 
-class AllBooksScreen extends StatelessWidget {
-  const AllBooksScreen({super.key});
+class BooksCategorySection extends StatefulWidget {
+  const BooksCategorySection({super.key});
+
+  @override
+  State<BooksCategorySection> createState() => _BooksCategorySectionState();
+}
+
+class _BooksCategorySectionState extends State<BooksCategorySection> {
+  @override
+  void initState() {
+    super.initState();
+    final jwt = AuthRepository.instance.jwt;
+    locator<BookRepositoryProvider>().fetchBooks(jwt!);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final jwt = AuthRepository.instance.jwt;
-    locator<BookRepositoryProvider>().fetchBooks(jwt!);
     return Consumer<BookRepositoryProvider>(
       builder: (context, provider, _) {
         final state = provider.state;
@@ -45,39 +55,9 @@ class AllBooksScreen extends StatelessWidget {
             delegate: SliverChildListDelegate(
               books
                   .map(
-                    (book) => BookContainer(
-                      title: book.title,
-                      rating: book.ratings.averageRating,
-                      author: book.author,
-                      base64image: book.coverImage,
-                      bookId: book.id!,
-                    ),
+                    (book) => CategoryBookContainer(book: book),
                   )
                   .toList(),
-              // const [
-              //   BookContainer(
-              //     title: 'The Boy With One Name',
-              //     rating: 4.0,
-              //     author: 'J.R. Wallis',
-              //     base64image:
-              //         'https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781471157936/the-boy-with-one-name-9781471157936_hr.jpg',
-              //   ),
-              //   BookContainer(
-              //     title: 'The Name of the Wind',
-              //     author: 'Patrick Rothfuss',
-              //     base64image:
-              //         'https://www.thepacer.net/wp-content/uploads/2020/11/91b8oNwaV1L.jpg',
-              //     rating: 5.0,
-              //   ),
-              //   BookContainer(
-              //     title: 'The Book With One Name',
-              //     rating: 4.0,
-              //     author: 'Anonymous',
-              //     base64image:
-              //         'https://sammicox.wordpress.com/wp-content/uploads/2018/06/the-book-with-no-name-front-cover.jpg',
-              //   ),
-              //   SizedBox(height: 100),
-              // ],
             ),
           );
         } else if (state is ErrorState) {

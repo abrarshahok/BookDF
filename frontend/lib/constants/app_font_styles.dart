@@ -1,5 +1,5 @@
-import 'package:bookdf/constants/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:bookdf/constants/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final titleStyle = GoogleFonts.playfairDisplay(
@@ -26,6 +26,12 @@ final secondaryLightStyle = GoogleFonts.inter(
   color: secondaryColor,
 );
 
+final buttonStyle = GoogleFonts.inter(
+  fontSize: 16,
+  fontWeight: FontWeight.w500,
+  color: bgColor,
+);
+
 final primaryButtonStyle = GoogleFonts.inter(
   fontSize: 12,
   fontWeight: FontWeight.w500,
@@ -35,5 +41,11 @@ final primaryButtonStyle = GoogleFonts.inter(
 final secondaryButtonStyle = GoogleFonts.inter(
   fontSize: 12,
   fontWeight: FontWeight.w400,
-  color: Colors.white,
+  color: bgColor,
+);
+
+final subtitleStyle = GoogleFonts.inter(
+  fontSize: 14,
+  fontWeight: FontWeight.w500,
+  color: primaryColor,
 );

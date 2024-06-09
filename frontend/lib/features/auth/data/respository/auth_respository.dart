@@ -33,41 +33,33 @@ class AuthRepository {
       final uri = Uri.parse('$baseUrl/auth/signup/');
       var request = http.MultipartRequest('POST', uri);
 
-      // Add headers
       request.headers.addAll({
         'Content-Type': 'multipart/form-data',
       });
 
-      // Add text fields
       request.fields['username'] = username;
       request.fields['email'] = email;
       request.fields['password'] = password;
 
-      // Determine the MIME type of the file
-      var mimeType = lookupMimeType(image.path);
-      var mediaType = mimeType != null
+      final mimeType = lookupMimeType(image.path);
+      final mediaType = mimeType != null
           ? MediaType.parse(mimeType)
           : MediaType('application', 'octet-stream');
 
-      // Add file field
-      var multipartFile = await http.MultipartFile.fromPath(
+      final multipartFile = await http.MultipartFile.fromPath(
         'pic',
         image.path,
         contentType: mediaType,
       );
       request.files.add(multipartFile);
 
-      // Send request
-      var response = await request.send();
+      final response = await request.send();
 
-      // Convert streamed response to full response
       final responseBody = await http.Response.fromStream(response);
 
-      // Handle response
       if (response.statusCode == 200) {
         final prefs = await SharedPreferences.getInstance();
         final responseData = json.decode(responseBody.body);
-        log(responseData.toString());
         await prefs.setString('jwt', responseData['jwt']);
         return const Right(true);
       } else {
@@ -113,7 +105,7 @@ class AuthRepository {
     }
   }
 
-  Future<Either<Failure, bool>> getUser(String jwt) async {
+  Future<void> getUser(String jwt) async {
     try {
       final uri = Uri.parse('$baseUrl/auth/get-user/');
       final response = await http.get(
@@ -127,12 +119,11 @@ class AuthRepository {
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
         _currentUser = User.fromJson(responseBody['user']);
-        return const Right(true);
       } else {
-        return Left(Failure('Signin failed: ${response.statusCode}'));
+        _currentUser = null;
       }
     } catch (e) {
-      return Left(Failure('Signin error: $e'));
+      rethrow;
     }
   }
 
@@ -140,14 +131,15 @@ class AuthRepository {
     try {
       final prefs = await SharedPreferences.getInstance();
       _jwt = prefs.getString('jwt');
-      log(_jwt!);
       if (_jwt != null) {
+        log(_jwt!);
         await getUser(jwt!);
         return const Right(true);
       } else {
         return const Right(false);
       }
     } catch (_) {
+      log(_.toString());
       return Left(Failure('Something went wrong!'));
     }
   }

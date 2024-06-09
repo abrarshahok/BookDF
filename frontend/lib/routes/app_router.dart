@@ -8,5 +8,7 @@ class AppRouter extends $AppRouter {
         AutoRoute(page: AppRoute.page, initial: true),
         AutoRoute(page: AuthRoute.page),
         AutoRoute(page: HomeRoute.page),
+        AutoRoute(page: BookDetailsRoute.page),
+        AutoRoute(page: BookPdfViewRoute.page)
       ];
 }

@@ -43,11 +43,13 @@ class _ContinueReadingBookContainerState
       NetworkImage(widget.imageUrl),
     );
 
-    setState(() {
-      dominantColor = paletteGenerator.dominantColor?.color ??
-          secondaryAccentColor.withOpacity(0.5);
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        dominantColor = paletteGenerator.dominantColor?.color ??
+            secondaryAccentColor.withOpacity(0.5);
+        isLoading = false;
+      });
+    }
   }
 
   @override

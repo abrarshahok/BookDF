@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import '../states/load_state.dart';
-import '/features/home/data/respository/book_repository.dart';
+import '../features/book/data/respository/book_repository.dart';
 
 @lazySingleton
 class BookRepositoryProvider with ChangeNotifier {
