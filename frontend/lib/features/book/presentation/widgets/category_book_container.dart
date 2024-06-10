@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:auto_route/auto_route.dart';
+import 'package:bookdf/components/custom_memory_image.dart';
 import 'package:bookdf/features/book/data/models/book.dart';
 import 'package:bookdf/routes/app_router.gr.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +12,7 @@ import '/constants/app_font_styles.dart';
 import '/constants/app_sizes.dart';
 
 class CategoryBookContainer extends StatefulWidget {
-  const CategoryBookContainer({
-    super.key,
-    required this.book,
-  });
+  const CategoryBookContainer({super.key, required this.book});
 
   final Book book;
 
@@ -72,10 +70,11 @@ class _CategoryBookContainerState extends State<CategoryBookContainer> {
               ),
               child: isLoading
                   ? null
-                  : Image.memory(
-                      key: ValueKey(widget.book.id),
-                      bytes,
-                      fit: BoxFit.contain,
+                  : CustomMemoryImage(
+                      imageString: widget.book.coverImage!,
+                      height: 100,
+                      width: double.infinity,
+                      cacheKey: widget.book.id!,
                     ),
             ),
             gapH12,

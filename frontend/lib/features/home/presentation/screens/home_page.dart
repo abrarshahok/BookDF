@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:bookdf/features/auth/data/respository/auth_respository.dart';
 import 'package:bookdf/features/book/presentation/screens/books_screen.dart';
 import 'package:dot_curved_bottom_nav/dot_curved_bottom_nav.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const HomeAppBar(),
+      appBar: HomeAppBar(
+        user: AuthRepository.instance.currentUser!,
+      ),
       body: CustomScrollView(
         controller: _scrollController,
         slivers: booksScreen,

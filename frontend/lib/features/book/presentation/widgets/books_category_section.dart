@@ -1,5 +1,6 @@
 import 'package:bookdf/dependency_injection/dependency_injection.dart';
 import 'package:bookdf/features/auth/data/respository/auth_respository.dart';
+import 'package:bookdf/features/book/presentation/widgets/category_books_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +32,10 @@ class _BooksCategorySectionState extends State<BooksCategorySection> {
         final state = provider.state;
         if (state is LoadingState) {
           return const SliverToBoxAdapter(
-            child: Loading(),
+            child: CategoryBooksLoading(
+              height: 275,
+              width: 300,
+            ),
           );
         } else if (state is SuccessState) {
           final books = state.data as List<Book>;

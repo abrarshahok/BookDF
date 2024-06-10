@@ -8,6 +8,7 @@ import '../../../../constants/app_sizes.dart';
 import '../widgets/books_category_section.dart';
 
 List<Widget> booksScreen = [
+  const SliverToBoxAdapter(child: gapH20),
   const SliverToBoxAdapter(child: SearchBarSection()),
   if (AuthRepository.instance.currentUser!.currentReadings!.isNotEmpty)
     const SliverToBoxAdapter(child: ContinueReadingSection()),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:bookdf/components/custom_memory_image.dart';
 import 'package:bookdf/routes/app_router.gr.dart';
 
 import '../../../../utils/save_base64_pdf.dart';
@@ -84,9 +85,11 @@ class _ContinueReadingBookContainerState
             ),
             child: isLoading
                 ? null
-                : Image.memory(
-                    bytes,
-                    fit: BoxFit.contain,
+                : CustomMemoryImage(
+                    imageString: widget.readingSession.bookDetails.coverImage!,
+                    height: 100,
+                    width: 100,
+                    cacheKey: widget.readingSession.bookDetails.id!,
                   ),
           ),
           gapW12,
