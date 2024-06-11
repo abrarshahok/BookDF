@@ -6,3 +6,6 @@ node_modules/
 
 # Ignore temp directory
 temp/
+
+# Ignore access log
+access.log
