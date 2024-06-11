@@ -24,7 +24,7 @@ const userSchema = new Schema({
       ref: "ReadingSession",
     },
   ],
-  libray: [
+  library: [
     {
       type: Schema.Types.ObjectId,
       ref: "Book",

@@ -128,7 +128,7 @@ class ReadingSessionController {
             preserveNullAndEmptyArrays: true,
           },
         },
-      ]);
+      ]).sort({ updatedAt: -1 });
 
       res.status(200).json({ success: true, sessions });
     } catch (err) {

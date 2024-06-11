@@ -4,7 +4,6 @@ const upload = require("../middlewares/file-upload");
 const BookController = require("../controllers/book-controller");
 const ReviewController = require("../controllers/review-controller");
 
-// books/add-book => POST
 router.post(
   "/add-book",
   upload.fields([
@@ -14,8 +13,9 @@ router.post(
   BookController.addBook
 );
 
-// books/ => GET
 router.get("/", BookController.getBooks);
+
+router.get("/library", BookController.getLibrayBooks);
 
 router.delete("/:bookId", BookController.deleteBook);
 

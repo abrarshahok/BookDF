@@ -1,6 +1,7 @@
 const Book = require("../models/book");
 const User = require("../models/user");
 const Review = require("../models/review");
+const ReadingSession = require("../models/reading-session");
 
 const generateBase64String = require("../utils/to-base64-string");
 const pdfPageCounter = require("../utils/pdf-page-counter");
@@ -37,13 +38,15 @@ class BookController {
 
       const user = await User.findById(req.userId);
 
-      user.libray.push(newBook);
+      user.library.push(newBook);
 
       await user.save();
 
-      res
-        .status(200)
-        .json({ success: true, message: "Book saved successfully" });
+      res.status(200).json({
+        success: true,
+        message: "Book saved successfully",
+        book: newBook,
+      });
     } catch (error) {
       res.status(500).json({
         success: false,
@@ -116,8 +119,8 @@ class BookController {
 
       if (!book) {
         return res
-          .status(200)
-          .json({ success: true, message: "Book not found!" });
+          .status(404)
+          .json({ success: false, message: "Book not found!" });
       }
 
       if (book.creator.toString() !== req.userId) {
@@ -135,13 +138,16 @@ class BookController {
         _id: { $in: reviews },
       });
 
-      const user = await User.findById(req.userId);
+      await ReadingSession.deleteMany({ bookId: bookId });
 
-      user.libray.pull(bookId);
+      const users = await User.find();
 
-      user.bookmarks.pull(bookId);
-
-      await user.save();
+      for (let user of users) {
+        if (user.library) user.library.pull(bookId);
+        if (user.bookmarks) user.bookmarks.pull(bookId);
+        if (user.currentReadings) user.currentReadings.pull(bookId);
+        await user.save();
+      }
 
       res
         .status(200)
@@ -179,7 +185,20 @@ class BookController {
 
   static getBooks = async (req, res, next) => {
     try {
-      const books = await Book.find();
+      const books = await Book.find().sort({ updatedAt: -1 });
+      res.status(200).json({ success: true, books: books });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
+    }
+  };
+
+  static getLibrayBooks = async (req, res, next) => {
+    try {
+      const books = await Book.find({ creator: req.userId });
       res.status(200).json({ success: true, books: books });
     } catch (error) {
       res.status(500).json({
