@@ -1,15 +1,14 @@
 import 'dart:io';
-import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
 import 'package:bookdf/utils/show_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import '../features/book/data/respository/book_repository.dart';
 import '/features/auth/data/respository/auth_respository.dart';
 import '/routes/app_router.gr.dart';
 import '/states/load_state.dart';
 
-// Enum for Auth Mode
 enum AuthMode { signup, login }
 
 @lazySingleton
@@ -21,7 +20,6 @@ class AuthRepositoryProvider extends ChangeNotifier {
 
   LoadState get state => _state;
 
-  // Login method
   Future<void> signin({
     required String email,
     required String password,
@@ -46,14 +44,11 @@ class AuthRepositoryProvider extends ChangeNotifier {
     );
   }
 
-  // Select image method
   void selectImage(File image) {
     pickedImage = image;
-    log(pickedImage!.path);
     notifyListeners();
   }
 
-  // Sign up method
   Future<void> signUp({
     required String username,
     required String email,
@@ -98,7 +93,6 @@ class AuthRepositoryProvider extends ChangeNotifier {
     }
   }
 
-  // Switch auth mode method
   void switchAuthMode() {
     if (authMode == AuthMode.login) {
       authMode = AuthMode.signup;
@@ -129,13 +123,26 @@ class AuthRepositoryProvider extends ChangeNotifier {
     _setState(SuccessState(true));
   }
 
-  // Sign out method
+  void toggleBookmarks(String bookId, BuildContext context) async {
+    final result = await BookRepository.instance.toggleBookmarks(bookId);
+
+    result.fold(
+      (error) {
+        showToast('Something went wrong!', context, isError: true);
+      },
+      (message) {
+        AuthRepository.instance.toggleBookmarks(bookId);
+        showToast(message, context);
+      },
+    );
+    notifyListeners();
+  }
+
   void signOut(BuildContext context) {
     AuthRepository.instance.signOut();
     context.router.replace(const AuthRoute());
   }
 
-  // Private method to set state and notify listeners
   void _setState(LoadState state, {bool build = true}) {
     _state = state;
     if (build) {

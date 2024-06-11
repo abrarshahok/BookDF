@@ -1,33 +1,24 @@
-import 'package:bookdf/components/custom_error_widget.dart';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '/features/book/presentation/widgets/category_books_loading.dart';
-import '/dependency_injection/dependency_injection.dart';
-import '../../../../constants/app_font_styles.dart';
-import '../../../../providers/book_respository_provider.dart';
-import '../../../../states/load_state.dart';
 import '../../data/models/book.dart';
 import 'category_book_container.dart';
+import '../../../../states/load_state.dart';
+import '/components/custom_error_widget.dart';
+import '../../../../constants/app_font_styles.dart';
+import '/dependency_injection/dependency_injection.dart';
+import '../../../../providers/book_respository_provider.dart';
+import '/features/book/presentation/widgets/category_books_loading.dart';
 
-class BooksCategorySection extends StatefulWidget {
-  const BooksCategorySection({super.key});
-
-  @override
-  State<BooksCategorySection> createState() => _BooksCategorySectionState();
-}
-
-class _BooksCategorySectionState extends State<BooksCategorySection> {
-  @override
-  void initState() {
-    super.initState();
-    locator<BookRepositoryProvider>().fetchBooks();
-  }
-
+class BooksCategorySection extends StatelessWidget {
+  const BooksCategorySection({super.key, required this.category});
+  final String category;
   @override
   Widget build(BuildContext context) {
+    locator<BookRepositoryProvider>().fetchBooks(category);
     return Consumer<BookRepositoryProvider>(
       builder: (context, provider, _) {
+        log('Build Book Section');
         final state = provider.state;
         if (state is LoadingState) {
           return const SliverToBoxAdapter(

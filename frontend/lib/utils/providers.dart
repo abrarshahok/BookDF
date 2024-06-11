@@ -1,5 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import '../providers/book_genre_provider.dart';
 import '../providers/book_respository_provider.dart';
 import '../providers/auth_repository_provider.dart';
 import '/providers/library_books_provider.dart';
@@ -10,6 +11,7 @@ import '/providers/reading_session_respository_provider.dart';
 final List<SingleChildWidget> providers = [
   ChangeNotifierProvider(
       create: (context) => locator<AuthRepositoryProvider>()),
+  ChangeNotifierProvider(create: (context) => locator<BookGenreProvider>()),
   ChangeNotifierProvider(
       create: (context) => locator<BookRepositoryProvider>()),
   ChangeNotifierProvider(

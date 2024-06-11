@@ -9,6 +9,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:bookdf/providers/auth_repository_provider.dart' as _i7;
+import 'package:bookdf/providers/book_genre_provider.dart' as _i8;
 import 'package:bookdf/providers/book_respository_provider.dart' as _i5;
 import 'package:bookdf/providers/bottom_bar_index_provider.dart' as _i4;
 import 'package:bookdf/providers/library_books_provider.dart' as _i3;
@@ -38,6 +39,7 @@ extension GetItInjectableX on _i1.GetIt {
         () => _i6.ReadingSessionRepositoryProvider());
     gh.lazySingleton<_i7.AuthRepositoryProvider>(
         () => _i7.AuthRepositoryProvider());
+    gh.lazySingleton<_i8.BookGenreProvider>(() => _i8.BookGenreProvider());
     return this;
   }
 }

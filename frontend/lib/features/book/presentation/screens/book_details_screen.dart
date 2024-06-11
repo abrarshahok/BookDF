@@ -55,17 +55,23 @@ class BookDetailsScreen extends StatelessWidget {
           // const SliverToBoxAdapter(child: ReviewsSection()),
         ],
       ),
-      bottomNavigationBar:
-          Consumer<AuthRepositoryProvider>(builder: (ctx, provider, _) {
-        return _buildBottomAppBar(context);
-      }),
+      bottomNavigationBar: Consumer<AuthRepositoryProvider>(
+        builder: (ctx, provider, _) {
+          return _buildBottomAppBar(context);
+        },
+      ),
     );
   }
 
   BottomAppBar _buildBottomAppBar(BuildContext context) {
-    final currentReadings =
-        AuthRepository.instance.currentUser!.currentReadings!;
+    final currentUser = AuthRepository.instance.currentUser!;
+    final currentReadings = currentUser.currentReadings!;
+    final bookmarks = currentUser.bookmarks!;
     bool isBookInCurrentReading = currentReadings.contains(book.id);
+    bool isBookmarked = bookmarks.contains(book.id);
+
+    log(bookmarks.toString());
+
     return BottomAppBar(
       color: bgColor,
       elevation: 0,
@@ -74,8 +80,11 @@ class BookDetailsScreen extends StatelessWidget {
         children: [
           gapW20,
           CustomIconButton(
-            onTap: () {},
-            icon: IconlyLight.bookmark,
+            onTap: () {
+              locator<AuthRepositoryProvider>()
+                  .toggleBookmarks(book.id!, context);
+            },
+            icon: isBookmarked ? IconlyBold.bookmark : IconlyLight.bookmark,
             iconColor: accentColor,
             size: 30,
           ),

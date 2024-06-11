@@ -146,6 +146,18 @@ class AuthRepository {
     }
   }
 
+  void toggleBookmarks(String bookId) {
+    final List<String> newBookmarksList = List.from(_currentUser!.bookmarks!);
+
+    if (newBookmarksList.contains(bookId)) {
+      newBookmarksList.remove(bookId);
+      _currentUser = _currentUser!.copyWith(bookmarks: newBookmarksList);
+    } else {
+      newBookmarksList.add(bookId);
+      _currentUser = _currentUser!.copyWith(bookmarks: newBookmarksList);
+    }
+  }
+
   Future<Either<Failure, bool>> autoLogin() async {
     try {
       final prefs = await SharedPreferences.getInstance();

@@ -8,10 +8,21 @@ class BookRepositoryProvider with ChangeNotifier {
   LoadState _state = InitialState();
   LoadState get state => _state;
 
-  void fetchBooks() async {
+  void fetchBooks(String genre) async {
     _setState(LoadingState(), build: false);
 
-    final result = await BookRepository.instance.fetchBooks();
+    final result = await BookRepository.instance.fetchBooks(genre);
+
+    result.fold(
+      (error) => _setState(ErrorState(error)),
+      (books) => _setState(SuccessState(books)),
+    );
+  }
+
+  void fetchBookmarkedBooks() async {
+    _setState(LoadingState(), build: false);
+
+    final result = await BookRepository.instance.fetchBookmarkedBooks();
 
     result.fold(
       (error) => _setState(ErrorState(error)),

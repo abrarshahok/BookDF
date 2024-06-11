@@ -99,7 +99,6 @@ class AuthCard extends StatelessWidget {
                 )
               else
                 const SizedBox(),
-
               Text(
                 'Email',
                 style: secondaryStyle.copyWith(fontWeight: FontWeight.bold),
@@ -168,9 +167,7 @@ class AuthCard extends StatelessWidget {
                     ),
                   ],
                 ),
-              // else
-              //   const SizedBox(),
-              const SizedBox(height: 10),
+              gapH20,
               if (auth.state is LoadingState)
                 const CircularProgressIndicator(
                   color: secondaryColor,

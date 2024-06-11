@@ -1,4 +1,5 @@
 import 'package:provider/provider.dart';
+import '../../../../providers/book_genre_provider.dart';
 import '/features/auth/data/respository/auth_respository.dart';
 import '/providers/auth_repository_provider.dart';
 import '/features/book/presentation/widgets/categories_header.dart';
@@ -27,7 +28,11 @@ class BooksScreen extends StatelessWidget {
           ),
         ),
         const CategoriesHeader(),
-        const BooksCategorySection(),
+        Consumer<BookGenreProvider>(
+          builder: (context, provider, _) {
+            return BooksCategorySection(category: provider.genre);
+          },
+        ),
       ],
     );
   }

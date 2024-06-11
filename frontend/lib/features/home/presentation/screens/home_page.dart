@@ -11,6 +11,7 @@ import '/features/auth/data/respository/auth_respository.dart';
 import '/features/book/presentation/screens/books_screen.dart';
 import '/features/home/presentation/widgets/home_app_bar.dart';
 import '/features/library/presentation/screens/libray_books_screen.dart';
+import '/features/book/presentation/screens/bookmarked_books_screen.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget {
@@ -24,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   final _screens = [
     const BooksScreen(),
     const LibraryBooksScreen(),
-    const BooksScreen(),
+    const BookmarkedBooksScreen(),
     const BooksScreen(),
   ];
   @override
