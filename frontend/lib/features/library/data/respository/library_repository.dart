@@ -106,6 +106,70 @@ class LibraryRepository {
     }
   }
 
+  Future<Either<String, List<Book>>> updateBook({
+    required String title,
+    required String author,
+    required String description,
+    required String genre,
+    required File? coverImage,
+    required File? pdf,
+    required String bookId,
+  }) async {
+    try {
+      final request =
+          h.MultipartRequest('PATCH', Uri.parse('$baseUrl/books/$bookId'));
+
+      request.headers.addAll({
+        'Content-Type': 'multipart/form-data',
+        'Authorization': 'Bearer $_jwt',
+      });
+
+      request.fields['title'] = title;
+      request.fields['author'] = author;
+      request.fields['description'] = description;
+      request.fields['genre'] = genre;
+
+      // Adding cover image file
+      if (coverImage != null) {
+        final coverImageMimeType = lookupMimeType(coverImage.path);
+        final coverImageFile = await h.MultipartFile.fromPath(
+          'coverImage',
+          coverImage.path,
+          contentType: MediaType.parse(coverImageMimeType!),
+        );
+        request.files.add(coverImageFile);
+      }
+
+      // Adding PDF file
+      if (pdf != null) {
+        final pdfMimeType = lookupMimeType(pdf.path);
+        final pdfFile = await h.MultipartFile.fromPath(
+          'pdf',
+          pdf.path,
+          contentType: MediaType.parse(pdfMimeType!),
+        );
+        request.files.add(pdfFile);
+      }
+
+      final response = await request.send();
+      final responseString = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(responseString);
+        final Book newBook = Book.fromJson(responseBody['book']);
+        _books.removeWhere((book) => book.id == bookId);
+        _books.insert(0, newBook);
+        return Right(_books);
+      } else {
+        log(responseString);
+        return const Left('Failed to update book!');
+      }
+    } catch (err) {
+      log(err.toString());
+      return const Left('Something went wrong!');
+    }
+  }
+
   Future<Either<String, List<Book>>> deleteBook(String bookId) async {
     try {
       final response = await http.delete(

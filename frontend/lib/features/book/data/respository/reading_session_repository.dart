@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:bookdf/features/auth/data/respository/auth_respository.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../config/http_config.dart';
 import '/features/book/data/models/reading_session.dart';
@@ -13,15 +14,15 @@ class ReadingSessionsRepository {
   List<ReadingSession> _readingSessions = [];
   List<ReadingSession> get readingSessions => _readingSessions;
 
-  Future<Either<String, List<ReadingSession>>> fetchReadingSessions(
-    String jwt,
-  ) async {
+  final _jwt = AuthRepository.instance.jwt!;
+
+  Future<Either<String, List<ReadingSession>>> fetchReadingSessions() async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/readingSessions'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwt'
+          'Authorization': 'Bearer $_jwt'
         },
       );
 
@@ -43,7 +44,6 @@ class ReadingSessionsRepository {
   }
 
   Future<Either<String, List<ReadingSession>>> createSession(
-    String jwt,
     String bookId,
     int totalPages,
   ) async {
@@ -52,7 +52,7 @@ class ReadingSessionsRepository {
         Uri.parse('$baseUrl/readingSessions/$bookId'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwt'
+          'Authorization': 'Bearer $_jwt'
         },
         body: jsonEncode({
           'totalPages': totalPages,
@@ -73,7 +73,6 @@ class ReadingSessionsRepository {
   }
 
   Future<Either<String, List<ReadingSession>>> updateSession(
-    String jwt,
     String sessionId,
     int currentPage,
   ) async {
@@ -82,7 +81,7 @@ class ReadingSessionsRepository {
         Uri.parse('$baseUrl/readingSessions/$sessionId'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwt'
+          'Authorization': 'Bearer $_jwt'
         },
         body: jsonEncode({
           'currentPage': currentPage,

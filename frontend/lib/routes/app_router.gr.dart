@@ -34,7 +34,10 @@ abstract class $AppRouter extends _i7.RootStackRouter {
           orElse: () => const AddBookRouteArgs());
       return _i7.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i1.AddBookScreen(key: args.key),
+        child: _i1.AddBookScreen(
+          key: args.key,
+          book: args.book,
+        ),
       );
     },
     AppRoute.name: (routeData) {
@@ -86,10 +89,14 @@ abstract class $AppRouter extends _i7.RootStackRouter {
 class AddBookRoute extends _i7.PageRouteInfo<AddBookRouteArgs> {
   AddBookRoute({
     _i8.Key? key,
+    _i9.Book? book,
     List<_i7.PageRouteInfo>? children,
   }) : super(
           AddBookRoute.name,
-          args: AddBookRouteArgs(key: key),
+          args: AddBookRouteArgs(
+            key: key,
+            book: book,
+          ),
           initialChildren: children,
         );
 
@@ -100,13 +107,18 @@ class AddBookRoute extends _i7.PageRouteInfo<AddBookRouteArgs> {
 }
 
 class AddBookRouteArgs {
-  const AddBookRouteArgs({this.key});
+  const AddBookRouteArgs({
+    this.key,
+    this.book,
+  });
 
   final _i8.Key? key;
 
+  final _i9.Book? book;
+
   @override
   String toString() {
-    return 'AddBookRouteArgs{key: $key}';
+    return 'AddBookRouteArgs{key: $key, book: $book}';
   }
 }
 

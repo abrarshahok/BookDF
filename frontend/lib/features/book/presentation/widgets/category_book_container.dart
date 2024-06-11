@@ -75,7 +75,7 @@ class _CategoryBookContainerState extends State<CategoryBookContainer> {
                       imageString: widget.book.coverImage!,
                       height: 100,
                       width: double.infinity,
-                      cacheKey: widget.book.id!,
+                      cacheKey: widget.book.coverImage!,
                     ),
             ),
             gapH12,

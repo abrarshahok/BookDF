@@ -14,12 +14,23 @@ class Book with _$Book {
     String? genre,
     int? pages,
     String? coverImage,
-    String? pdf,
+    Pdf? pdf,
     Ratings? ratings,
     List<dynamic>? reviews,
   }) = _Book;
 
   factory Book.fromJson(Map<String, dynamic> json) => _$BookFromJson(json);
+}
+
+@JsonSerializable()
+class Pdf {
+  final String? data;
+  final String? fileName;
+
+  Pdf({this.data, this.fileName});
+
+  factory Pdf.fromJson(Map<String, dynamic> json) => _$PdfFromJson(json);
+  Map<String, dynamic> toJson() => _$PdfToJson(this);
 }
 
 @freezed

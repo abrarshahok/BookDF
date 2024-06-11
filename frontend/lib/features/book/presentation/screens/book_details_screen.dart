@@ -106,7 +106,7 @@ class BookDetailsScreen extends StatelessWidget {
 
   void _openPdfScreen(bool isBookInCurrentReading, BuildContext context) {
     final fileName = book.title!.replaceAll(' ', '-') + book.id!;
-    final base64Pdf = book.pdf!.split(',').last;
+    final base64Pdf = book.pdf!.data!.split(',').last;
 
     saveBase64Pdf(base64Pdf, fileName).then((path) {
       if (isBookInCurrentReading) {
@@ -121,8 +121,7 @@ class BookDetailsScreen extends StatelessWidget {
         ));
       } else {
         final provider = locator<ReadingSessionRepositoryProvider>();
-        final jwt = AuthRepository.instance.jwt!;
-        return provider.createSession(jwt, book.id!, book.pages!).then((value) {
+        return provider.createSession(book.id!, book.pages!).then((value) {
           final state = provider.state;
           if (state is SuccessState) {
             final sessions = state.data as List<ReadingSession>;

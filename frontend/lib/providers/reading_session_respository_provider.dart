@@ -10,11 +10,11 @@ class ReadingSessionRepositoryProvider with ChangeNotifier {
   LoadState _state = InitialState();
   LoadState get state => _state;
 
-  void fetchReadingSessions(String jwt) async {
+  void fetchReadingSessions() async {
     _setState(LoadingState(), build: false);
 
     final result =
-        await ReadingSessionsRepository.instance.fetchReadingSessions(jwt);
+        await ReadingSessionsRepository.instance.fetchReadingSessions();
 
     result.fold(
       (error) => _setState(ErrorState(error)),
@@ -22,11 +22,10 @@ class ReadingSessionRepositoryProvider with ChangeNotifier {
     );
   }
 
-  Future<void> createSession(String jwt, String bookId, int totalPages) async {
+  Future<void> createSession(String bookId, int totalPages) async {
     _setState(LoadingState(), build: false);
 
     final result = await ReadingSessionsRepository.instance.createSession(
-      jwt,
       bookId,
       totalPages,
     );
@@ -40,15 +39,10 @@ class ReadingSessionRepositoryProvider with ChangeNotifier {
     );
   }
 
-  Future<void> updateSession(
-    String jwt,
-    String sessionId,
-    int currentPage,
-  ) async {
+  Future<void> updateSession(String sessionId, int currentPage) async {
     _setState(LoadingState(), build: false);
 
     final result = await ReadingSessionsRepository.instance.updateSession(
-      jwt,
       sessionId,
       currentPage,
     );

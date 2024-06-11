@@ -6,8 +6,6 @@ import '/dependency_injection/dependency_injection.dart';
 import '/features/book/presentation/widgets/continue_reading_loading.dart';
 import '/features/book/data/models/reading_session.dart';
 import '/providers/reading_session_respository_provider.dart';
-import '/features/auth/data/respository/auth_respository.dart';
-
 import '../../../../states/load_state.dart';
 import '/constants/app_font_styles.dart';
 import '/constants/app_sizes.dart';
@@ -25,8 +23,7 @@ class _ContinueReadingSectionState extends State<ContinueReadingSection> {
   @override
   void initState() {
     super.initState();
-    final jwt = AuthRepository.instance.jwt;
-    locator<ReadingSessionRepositoryProvider>().fetchReadingSessions(jwt!);
+    locator<ReadingSessionRepositoryProvider>().fetchReadingSessions();
   }
 
   @override

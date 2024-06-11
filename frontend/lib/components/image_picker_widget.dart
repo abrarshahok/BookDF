@@ -66,8 +66,8 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                   )
                 : (widget.imageString != null && widget.cacheKey != null)
                     ? CustomMemoryImage(
-                        height: 60,
-                        width: 60,
+                        height: 100,
+                        width: 100,
                         cacheKey: widget.cacheKey!,
                         imageString: widget.imageString!,
                       )

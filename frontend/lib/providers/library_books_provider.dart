@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:bookdf/providers/auth_repository_provider.dart';
@@ -63,6 +64,41 @@ class LibraryBooksProvider with ChangeNotifier {
       _setState(SuccessState(books));
       Navigator.pop(context);
       showToast('Book Added Successfully!', context);
+    });
+  }
+
+  void updateBook({
+    required String title,
+    required String author,
+    required String description,
+    required String genre,
+    required File? coverImage,
+    required File? pdf,
+    required String bookId,
+    required BuildContext context,
+  }) async {
+    _setState(LoadingState());
+
+    log(coverImage!.path);
+
+    final result = await LibraryRepository.instance.updateBook(
+      title: title,
+      author: author,
+      description: description,
+      genre: genre,
+      coverImage: coverImage,
+      pdf: pdf,
+      bookId: bookId,
+    );
+
+    result.fold((error) {
+      showToast('Book failed to save!', context, isError: true);
+      log(error);
+      _setState(ErrorState(error));
+    }, (books) {
+      _setState(SuccessState(books));
+      Navigator.pop(context);
+      showToast('Book Updated Successfully!', context);
     });
   }
 

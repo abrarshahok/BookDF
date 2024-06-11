@@ -90,7 +90,7 @@ class _ContinueReadingBookContainerState
                     imageString: widget.readingSession.bookDetails.coverImage!,
                     height: 100,
                     width: 100,
-                    cacheKey: widget.readingSession.bookDetails.id!,
+                    cacheKey: widget.readingSession.bookDetails.coverImage!,
                   ),
           ),
           gapW12,
@@ -121,7 +121,7 @@ class _ContinueReadingBookContainerState
                     final book = widget.readingSession.bookDetails;
                     final fileName =
                         book.title!.replaceAll(' ', '-') + book.id!;
-                    final base64Pdf = book.pdf!.split(',').last;
+                    final base64Pdf = book.pdf!.data!.split(',').last;
                     saveBase64Pdf(base64Pdf, fileName).then((path) {
                       return context.router.push(
                         BookPdfViewRoute(

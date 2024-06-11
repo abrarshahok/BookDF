@@ -68,6 +68,7 @@ class _LibraryBooksScreenState extends State<LibraryBooksScreen> {
                     (context, index) {
                       return LibraryBookContainer(
                         book: books[index],
+                        key: ValueKey(books[index].id!),
                       );
                     },
                     childCount: books.length,

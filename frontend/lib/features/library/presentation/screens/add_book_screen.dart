@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:auto_route/auto_route.dart';
 import '../widgets/custom_dropdown_button_form_field.dart';
+import '/features/book/data/models/book.dart';
 import '/components/custom_button.dart';
 import '/constants/app_colors.dart';
 import '/components/pdf_picker_widget.dart';
@@ -14,13 +15,22 @@ import '../../../../components/image_picker_widget.dart';
 import '/states/load_state.dart';
 
 @RoutePage()
-class AddBookScreen extends StatelessWidget {
-  AddBookScreen({super.key});
+class AddBookScreen extends StatefulWidget {
+  const AddBookScreen({super.key, this.book});
 
+  final Book? book;
+
+  @override
+  State<AddBookScreen> createState() => _AddBookScreenState();
+}
+
+class _AddBookScreenState extends State<AddBookScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   final _titleController = TextEditingController();
+
   final _authorController = TextEditingController();
+
   final _descriptionController = TextEditingController();
 
   String _genre = 'All';
@@ -34,6 +44,26 @@ class AddBookScreen extends StatelessWidget {
     'Technology',
     'Education',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.book != null) {
+      _titleController.text = widget.book!.title!;
+      _authorController.text = widget.book!.author!;
+      _descriptionController.text = widget.book!.description!;
+      _genre = widget.book!.genre!;
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _titleController.dispose();
+    _authorController.dispose();
+    _descriptionController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<LibraryBooksProvider>(
@@ -59,10 +89,13 @@ class AddBookScreen extends StatelessWidget {
                     children: [
                       ImagePickerWidget(
                         onImagePicked: (image) => provider.selectImage(image),
+                        imageString: widget.book?.coverImage,
+                        cacheKey: widget.book?.coverImage,
                       ),
                       gapW8,
                       PdfPickerWidget(
                         onPdfPicked: (pdf) => provider.selectPdf(pdf),
+                        pdfName: widget.book?.pdf?.fileName,
                       ),
                     ],
                   ),
@@ -137,7 +170,9 @@ class AddBookScreen extends StatelessWidget {
             elevation: 0,
             color: bgColor,
             child: CustomButton(
-              label: provider.state is LoadingState ? 'Saving...' : 'Add Book',
+              label: provider.state is LoadingState
+                  ? 'Saving...'
+                  : '${widget.book != null ? 'Update' : 'Add'} Book',
               textStyle: buttonStyle,
               borderRadius: 8,
               elevation: 5,
@@ -150,15 +185,28 @@ class AddBookScreen extends StatelessWidget {
                         return;
                       }
 
-                      provider.addBook(
-                        title: _titleController.text,
-                        author: _authorController.text,
-                        description: _descriptionController.text,
-                        coverImage: provider.coverImage,
-                        pdf: provider.pdfFile,
-                        genre: _genre,
-                        context: context,
-                      );
+                      if (widget.book != null) {
+                        provider.updateBook(
+                          title: _titleController.text,
+                          author: _authorController.text,
+                          description: _descriptionController.text,
+                          coverImage: provider.coverImage,
+                          pdf: provider.pdfFile,
+                          genre: _genre,
+                          bookId: widget.book!.id!,
+                          context: context,
+                        );
+                      } else {
+                        provider.addBook(
+                          title: _titleController.text,
+                          author: _authorController.text,
+                          description: _descriptionController.text,
+                          coverImage: provider.coverImage,
+                          pdf: provider.pdfFile,
+                          genre: _genre,
+                          context: context,
+                        );
+                      }
                     },
             ),
           ),

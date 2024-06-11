@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_document_picker/flutter_document_picker.dart';
 import 'package:iconly/iconly.dart';
+import 'package:flutter_document_picker/flutter_document_picker.dart';
 import 'package:path/path.dart' as path;
 import '/constants/app_colors.dart';
 import '/constants/app_font_styles.dart';
@@ -9,8 +9,9 @@ import '../constants/app_sizes.dart';
 import 'custom_button.dart';
 
 class PdfPickerWidget extends StatefulWidget {
-  const PdfPickerWidget({super.key, required this.onPdfPicked});
+  const PdfPickerWidget({super.key, required this.onPdfPicked, this.pdfName});
   final Function(File) onPdfPicked;
+  final String? pdfName;
   @override
   State<PdfPickerWidget> createState() => _PdfPickerWidgetState();
 }
@@ -39,7 +40,7 @@ class _PdfPickerWidgetState extends State<PdfPickerWidget> {
             child: Text(
               pickedPdfFile != null
                   ? path.basename(pickedPdfFile!.path)
-                  : 'No File',
+                  : widget.pdfName ?? 'No File',
               style: secondaryStyle.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
