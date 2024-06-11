@@ -1,7 +1,9 @@
 import 'dart:developer';
+import 'package:bookdf/providers/auth_repository_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:provider/provider.dart';
 import '/features/book/presentation/widgets/book_description.dart';
 import '/features/book/presentation/widgets/book_title_and_author.dart';
 import '/features/book/presentation/widgets/rating_section.dart';
@@ -30,9 +32,6 @@ class BookDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentReadings =
-        AuthRepository.instance.currentUser!.currentReadings!;
-    bool isBookInCurrentReading = currentReadings.contains(book.id);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -56,14 +55,17 @@ class BookDetailsScreen extends StatelessWidget {
           // const SliverToBoxAdapter(child: ReviewsSection()),
         ],
       ),
-      bottomNavigationBar: _buildBottomAppBar(isBookInCurrentReading, context),
+      bottomNavigationBar:
+          Consumer<AuthRepositoryProvider>(builder: (ctx, provider, _) {
+        return _buildBottomAppBar(context);
+      }),
     );
   }
 
-  BottomAppBar _buildBottomAppBar(
-    bool isBookInCurrentReading,
-    BuildContext context,
-  ) {
+  BottomAppBar _buildBottomAppBar(BuildContext context) {
+    final currentReadings =
+        AuthRepository.instance.currentUser!.currentReadings!;
+    bool isBookInCurrentReading = currentReadings.contains(book.id);
     return BottomAppBar(
       color: bgColor,
       elevation: 0,

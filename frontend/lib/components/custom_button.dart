@@ -36,6 +36,7 @@ class CustomButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
+        disabledBackgroundColor: secondaryAccentColor,
         backgroundColor: color,
         minimumSize: Size(
           width,
@@ -47,7 +48,11 @@ class CustomButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (leadingIcon != null) ...[
-            Icon(leadingIcon, size: 20),
+            Icon(
+              leadingIcon,
+              size: 20,
+              color: bgColor,
+            ),
             gapW8,
           ],
           Text(

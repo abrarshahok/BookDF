@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../constants/app_sizes.dart';
 import '/constants/app_colors.dart';
 import '/constants/app_font_styles.dart';
 import '/dependency_injection/dependency_injection.dart';
@@ -9,7 +10,7 @@ import '/states/load_state.dart';
 import '../../../../components/custom_button.dart';
 import '../../../../components/custom_text_form_field.dart';
 import '../../../../providers/auth_repository_provider.dart';
-import '../widgets/image_picker_widget.dart';
+import '../../../../components/image_picker_widget.dart';
 
 @RoutePage()
 class AuthScreen extends StatelessWidget {
@@ -49,13 +50,9 @@ class AuthCard extends StatelessWidget {
 
   final GlobalKey<FormState> _formKey = GlobalKey();
 
+  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  final Map<String, String> _authData = {
-    'username': '',
-    'email': '',
-    'password': '',
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -64,20 +61,30 @@ class AuthCard extends StatelessWidget {
         return Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               if (auth.authMode == AuthMode.signup)
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ImagePickerWidget(auth.selectImage),
-                    const SizedBox(height: 10),
+                    ImagePickerWidget(
+                        onImagePicked: (image) => auth.selectImage(image)),
+                    gapH20,
+                    Text(
+                      'Username',
+                      style:
+                          secondaryStyle.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    gapH4,
                     CustomTextFormField(
                       key: ValueKey(
                         auth.authMode == AuthMode.signup
                             ? 'username-signup'
                             : 'username',
                       ),
-                      hintText: 'Username',
+                      hintText: 'Enter username here',
+                      controller: _usernameController,
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Username is required!';
@@ -86,20 +93,24 @@ class AuthCard extends StatelessWidget {
                         }
                         return null;
                       },
-                      onSaved: (username) {
-                        _authData['username'] = username!;
-                      },
                     ),
-                    const SizedBox(height: 10),
+                    gapH20,
                   ],
                 )
               else
                 const SizedBox(),
+
+              Text(
+                'Email',
+                style: secondaryStyle.copyWith(fontWeight: FontWeight.bold),
+              ),
+              gapH4,
               CustomTextFormField(
                 key: ValueKey(
                   auth.authMode == AuthMode.signup ? 'email-signup' : 'email',
                 ),
-                hintText: 'Email',
+                hintText: 'Enter email here',
+                controller: _emailController,
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Email is required!';
@@ -109,17 +120,19 @@ class AuthCard extends StatelessWidget {
                   }
                   return null;
                 },
-                onSaved: (email) {
-                  _authData['email'] = email!;
-                },
               ),
-              const SizedBox(height: 10),
+              gapH20,
+              Text(
+                'Password',
+                style: secondaryStyle.copyWith(fontWeight: FontWeight.bold),
+              ),
+              gapH4,
               CustomTextFormField(
                 key: ValueKey(auth.authMode == AuthMode.signup
                     ? 'password-signup'
                     : 'password'),
                 obscureText: true,
-                hintText: 'Password',
+                hintText: 'Enter password here',
                 controller: _passwordController,
                 validator: (pass) {
                   if (pass!.isEmpty) {
@@ -130,14 +143,18 @@ class AuthCard extends StatelessWidget {
                   }
                   return null;
                 },
-                onSaved: (password) {
-                  _authData['password'] = password!;
-                },
               ),
               if (auth.authMode == AuthMode.signup)
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 10),
+                    gapH20,
+                    Text(
+                      'Confirm Password',
+                      style:
+                          secondaryStyle.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    gapH4,
                     CustomTextFormField(
                       key: const ValueKey('confirmPassword'),
                       obscureText: true,
@@ -147,7 +164,7 @@ class AuthCard extends StatelessWidget {
                         }
                         return null;
                       },
-                      hintText: 'Confirm Password',
+                      hintText: 'Confirm password',
                     ),
                   ],
                 ),
@@ -164,6 +181,8 @@ class AuthCard extends StatelessWidget {
                     CustomButton(
                       height: 50,
                       width: double.infinity,
+                      textStyle: buttonStyle,
+                      borderRadius: 8,
                       label:
                           auth.authMode == AuthMode.login ? 'LogIn' : 'SignUp',
                       onPressed: () => _submit(context),
@@ -171,7 +190,6 @@ class AuthCard extends StatelessWidget {
                     TextButton(
                       onPressed: () {
                         auth.switchAuthMode();
-                        _passwordController.clear();
                       },
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
@@ -209,16 +227,17 @@ class AuthCard extends StatelessWidget {
     try {
       if (auth.authMode == AuthMode.login) {
         await auth.signin(
-          email: _authData['email']!,
-          password: _authData['password']!,
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
           context: context,
         );
       } else {
         await auth.signUp(
-          username: _authData['username']!,
-          email: _authData['email']!,
-          password: _authData['password']!,
+          username: _usernameController.text.trim(),
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
           image: auth.pickedImage!,
+          context: context,
         );
       }
     } catch (error) {

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import '/config/http_config.dart';
 import '/features/book/data/models/book.dart';
+import '/features/auth/data/respository/auth_respository.dart';
 // import 'package:http/http.dart' as http;
 
 class BookRepository {
@@ -13,13 +14,15 @@ class BookRepository {
   List<Book> _books = [];
   List<Book> get books => _books;
 
-  Future<Either<String, List<Book>>> fetchBooks(String jwt) async {
+  final _jwt = AuthRepository.instance.jwt!;
+
+  Future<Either<String, List<Book>>> fetchBooks() async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/books'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwt'
+          'Authorization': 'Bearer $_jwt'
         },
       );
 

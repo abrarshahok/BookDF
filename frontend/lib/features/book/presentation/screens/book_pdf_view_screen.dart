@@ -38,8 +38,8 @@ class _BookPdfViewScreenState extends State<BookPdfViewScreen> {
   }
 
   void _fetchInitialSession() async {
-    _initialPage = _currentPage;
     _currentPage = widget.currentPage;
+    _initialPage = _currentPage;
     log(_initialPage.toString());
   }
 

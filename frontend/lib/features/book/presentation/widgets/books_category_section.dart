@@ -1,9 +1,9 @@
-import 'package:bookdf/dependency_injection/dependency_injection.dart';
-import 'package:bookdf/features/auth/data/respository/auth_respository.dart';
-import 'package:bookdf/features/book/presentation/widgets/category_books_loading.dart';
+import 'package:bookdf/components/custom_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '/features/book/presentation/widgets/category_books_loading.dart';
+import '/dependency_injection/dependency_injection.dart';
 import '../../../../constants/app_font_styles.dart';
 import '../../../../providers/book_respository_provider.dart';
 import '../../../../states/load_state.dart';
@@ -21,8 +21,7 @@ class _BooksCategorySectionState extends State<BooksCategorySection> {
   @override
   void initState() {
     super.initState();
-    final jwt = AuthRepository.instance.jwt;
-    locator<BookRepositoryProvider>().fetchBooks(jwt!);
+    locator<BookRepositoryProvider>().fetchBooks();
   }
 
   @override
@@ -41,10 +40,13 @@ class _BooksCategorySectionState extends State<BooksCategorySection> {
           final books = state.data as List<Book>;
           if (books.isEmpty) {
             return SliverToBoxAdapter(
-              child: Center(
-                child: Text(
-                  'No books found!',
-                  style: secondaryStyle,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 100),
+                child: Center(
+                  child: Text(
+                    'No books found!',
+                    style: secondaryStyle,
+                  ),
                 ),
               ),
             );
@@ -72,42 +74,6 @@ class _BooksCategorySectionState extends State<BooksCategorySection> {
           return const SliverToBoxAdapter(child: SizedBox());
         }
       },
-    );
-  }
-}
-
-class CustomErrorWidget extends StatelessWidget {
-  const CustomErrorWidget({
-    super.key,
-    required this.errorMessage,
-  });
-
-  final String errorMessage;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        errorMessage,
-        style: secondaryStyle,
-      ),
-    );
-  }
-}
-
-class Loading extends StatelessWidget {
-  const Loading({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: SizedBox(
-        height: 50,
-        width: 50,
-        child: CircularProgressIndicator(),
-      ),
     );
   }
 }

@@ -8,18 +8,15 @@ class SearchBarSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: CustomTextFormField(
-        prefixIcon: const Icon(
-          IconlyLight.search,
-          size: 20,
-          color: secondaryAccentColor,
-        ),
-        hintText: 'Search for books',
-        readOnly: true,
-        onTap: () {},
+    return CustomTextFormField(
+      prefixIcon: const Icon(
+        IconlyLight.search,
+        size: 20,
+        color: secondaryAccentColor,
       ),
+      hintText: 'Search for books',
+      readOnly: true,
+      onTap: () {},
     );
   }
 }

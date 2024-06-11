@@ -53,6 +53,7 @@ class _CategoryBookContainerState extends State<CategoryBookContainer> {
       child: SizedBox(
         height: 275,
         width: 300,
+        key: ValueKey(widget.book.id!),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,

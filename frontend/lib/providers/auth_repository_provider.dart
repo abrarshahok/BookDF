@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
+import 'package:bookdf/utils/show_toast.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import '/features/auth/data/respository/auth_respository.dart';
@@ -33,10 +35,13 @@ class AuthRepositoryProvider extends ChangeNotifier {
     );
 
     result.fold(
-      (error) => _setState(ErrorState('Failed to Login')),
+      (error) => _setState(ErrorState(error.message)),
       (success) {
-        _setState(SuccessState(success));
-        context.router.replace(const HomeRoute());
+        if (success) {
+          _setState(SuccessState(success));
+        } else {
+          showToast('Singin Failed', context);
+        }
       },
     );
   }
@@ -54,21 +59,29 @@ class AuthRepositoryProvider extends ChangeNotifier {
     required String email,
     required String password,
     required File image,
+    required BuildContext context,
   }) async {
-    try {
-      _setState(LoadingState());
+    _setState(LoadingState());
 
-      final result = await AuthRepository.instance.signup(
-          username: username, email: email, password: password, image: image);
-      result.fold((error) {
-        _setState(ErrorState('errorMessage'));
-      }, (success) {
-        _setState(SuccessState(null));
-      });
-    } catch (e) {
-      _setState(ErrorState('Something went wrong'));
-      rethrow;
-    }
+    final result = await AuthRepository.instance.signup(
+      username: username,
+      email: email,
+      password: password,
+      image: image,
+    );
+    result.fold(
+      (error) {
+        _setState(ErrorState(error.message));
+      },
+      (success) {
+        if (success) {
+          showToast('Signup Success', context);
+        } else {
+          showToast('Signup Failed!', context, isError: true);
+        }
+        switchAuthMode();
+      },
+    );
   }
 
   // Update profile method
@@ -104,6 +117,16 @@ class AuthRepositoryProvider extends ChangeNotifier {
       (error) => _setState(ErrorState(error.message)),
       (success) => _setState(SuccessState(success)),
     );
+  }
+
+  void addReadingSession(String bookId) {
+    AuthRepository.instance.addReadingSession(bookId);
+    _setState(SuccessState(true));
+  }
+
+  void deleteReadingSession(String bookId) {
+    AuthRepository.instance.deleteReadingSession(bookId);
+    _setState(SuccessState(true));
   }
 
   // Sign out method

@@ -5,7 +5,7 @@ import 'package:bookdf/features/auth/data/models/user.dart';
 import 'package:dartz/dartz.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as h;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../config/http_config.dart';
 import '../../../../utils/failure.dart';
@@ -31,7 +31,7 @@ class AuthRepository {
   }) async {
     try {
       final uri = Uri.parse('$baseUrl/auth/signup/');
-      var request = http.MultipartRequest('POST', uri);
+      var request = h.MultipartRequest('POST', uri);
 
       request.headers.addAll({
         'Content-Type': 'multipart/form-data',
@@ -46,7 +46,7 @@ class AuthRepository {
           ? MediaType.parse(mimeType)
           : MediaType('application', 'octet-stream');
 
-      final multipartFile = await http.MultipartFile.fromPath(
+      final multipartFile = await h.MultipartFile.fromPath(
         'pic',
         image.path,
         contentType: mediaType,
@@ -55,16 +55,17 @@ class AuthRepository {
 
       final response = await request.send();
 
-      final responseBody = await http.Response.fromStream(response);
+      final responseString = await h.Response.fromStream(response);
 
       if (response.statusCode == 200) {
-        final prefs = await SharedPreferences.getInstance();
-        final responseData = json.decode(responseBody.body);
-        await prefs.setString('jwt', responseData['jwt']);
-        return const Right(true);
-      } else {
-        return Left(Failure('Signup failed: ${response.statusCode}'));
+        final responseBody = jsonDecode(responseString.body);
+        if (responseBody['success']) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('jwt', responseBody['jwt']);
+          return const Right(true);
+        }
       }
+      return const Right(false);
     } catch (e) {
       return Left(Failure('Signup error: $e'));
     }
@@ -79,33 +80,30 @@ class AuthRepository {
       final response = await http.post(
         uri,
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
+        body: jsonEncode({
           'email': email,
           'password': password,
         }),
       );
 
+      final responseBody = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        final responseBody = json.decode(response.body);
-
-        _jwt = responseBody['jwt'];
-
-        final prefs = await SharedPreferences.getInstance();
-
-        await prefs.setString('jwt', _jwt!);
-
-        await getUser(jwt!);
-
-        return const Right(true);
-      } else {
-        return Left(Failure('Signin failed: ${response.statusCode}'));
+        if (responseBody['success']) {
+          final prefs = await SharedPreferences.getInstance();
+          _jwt = responseBody['jwt'];
+          await prefs.setString('jwt', _jwt!);
+          bool isSuccess = await getUser(jwt!);
+          return Right(isSuccess);
+        }
       }
+
+      return const Right(false);
     } catch (e) {
       return Left(Failure('Signin error: $e'));
     }
   }
 
-  Future<void> getUser(String jwt) async {
+  Future<bool> getUser(String jwt) async {
     try {
       final uri = Uri.parse('$baseUrl/auth/get-user/');
       final response = await http.get(
@@ -117,13 +115,34 @@ class AuthRepository {
       );
 
       if (response.statusCode == 200) {
-        final responseBody = json.decode(response.body);
-        _currentUser = User.fromJson(responseBody['user']);
-      } else {
-        _currentUser = null;
+        final responseBody = jsonDecode(response.body);
+        if (responseBody['success']) {
+          _currentUser = User.fromJson(responseBody['user']);
+          return true;
+        }
       }
+
+      return false;
     } catch (e) {
-      rethrow;
+      return false;
+    }
+  }
+
+  void addReadingSession(String bookId) {
+    _currentUser = _currentUser!.copyWith(
+      currentReadings: [...?_currentUser!.currentReadings, bookId],
+    );
+  }
+
+  void deleteReadingSession(String bookId) {
+    final List<String> newReadingSessionList =
+        List.from(_currentUser!.currentReadings ?? []);
+
+    if (newReadingSessionList.isNotEmpty) {
+      newReadingSessionList.remove(bookId);
+
+      _currentUser =
+          _currentUser!.copyWith(currentReadings: newReadingSessionList);
     }
   }
 
@@ -132,12 +151,11 @@ class AuthRepository {
       final prefs = await SharedPreferences.getInstance();
       _jwt = prefs.getString('jwt');
       if (_jwt != null) {
-        log(_jwt!);
-        await getUser(jwt!);
-        return const Right(true);
-      } else {
-        return const Right(false);
+        bool isSuccess = await getUser(jwt!);
+        return Right(isSuccess);
       }
+
+      return const Right(false);
     } catch (_) {
       log(_.toString());
       return Left(Failure('Something went wrong!'));

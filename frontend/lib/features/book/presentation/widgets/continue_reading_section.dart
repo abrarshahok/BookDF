@@ -1,3 +1,4 @@
+import 'package:bookdf/components/custom_error_widget.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ import '../../../../states/load_state.dart';
 import '/constants/app_font_styles.dart';
 import '/constants/app_sizes.dart';
 
-import 'books_category_section.dart';
 import 'continue_reading_book_container.dart';
 
 class ContinueReadingSection extends StatefulWidget {
@@ -31,50 +31,47 @@ class _ContinueReadingSectionState extends State<ContinueReadingSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          gapH20,
-          Text(
-            'Continue Reading',
-            style: titleStyle,
-          ),
-          Consumer<ReadingSessionRepositoryProvider>(
-            builder: (context, provider, child) {
-              final state = provider.state;
-              if (state is LoadingState) {
-                return const ContinueReadingLoading(
-                  height: 144,
-                  width: 290,
-                );
-              } else if (state is SuccessState) {
-                final sessions = state.data as List<ReadingSession>;
-                if (sessions.isEmpty) {
-                  return const SizedBox();
-                }
-                return SizedBox(
-                  height: 180,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: sessions.length,
-                    itemBuilder: (context, index) {
-                      return ContinueReadingBookContainer(
-                        readingSession: sessions[index],
-                      );
-                    },
-                  ),
-                );
-              } else if (state is ErrorState) {
-                return CustomErrorWidget(errorMessage: state.errorMessage);
-              } else {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        gapH20,
+        Text(
+          'Continue Reading',
+          style: titleStyle,
+        ),
+        Consumer<ReadingSessionRepositoryProvider>(
+          builder: (context, provider, child) {
+            final state = provider.state;
+            if (state is LoadingState) {
+              return const ContinueReadingLoading(
+                height: 144,
+                width: 290,
+              );
+            } else if (state is SuccessState) {
+              final sessions = state.data as List<ReadingSession>;
+              if (sessions.isEmpty) {
                 return const SizedBox();
               }
-            },
-          ),
-        ],
-      ),
+              return SizedBox(
+                height: 180,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: sessions.length,
+                  itemBuilder: (context, index) {
+                    return ContinueReadingBookContainer(
+                      readingSession: sessions[index],
+                    );
+                  },
+                ),
+              );
+            } else if (state is ErrorState) {
+              return CustomErrorWidget(errorMessage: state.errorMessage);
+            } else {
+              return const SizedBox();
+            }
+          },
+        ),
+      ],
     );
   }
 }

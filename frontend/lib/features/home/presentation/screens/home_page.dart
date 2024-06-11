@@ -1,11 +1,16 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:bookdf/features/auth/data/respository/auth_respository.dart';
-import 'package:bookdf/features/book/presentation/screens/books_screen.dart';
 import 'package:dot_curved_bottom_nav/dot_curved_bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
-import '/features/home/presentation/widgets/home_app_bar.dart';
+import 'package:provider/provider.dart';
+import '../../../../constants/app_sizes.dart';
 import '/constants/app_colors.dart';
+import '/providers/bottom_bar_index_provider.dart';
+import '/dependency_injection/dependency_injection.dart';
+import '/features/auth/data/respository/auth_respository.dart';
+import '/features/book/presentation/screens/books_screen.dart';
+import '/features/home/presentation/widgets/home_app_bar.dart';
+import '/features/library/presentation/screens/libray_books_screen.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget {
@@ -16,61 +21,70 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentPage = 0;
-  final ScrollController _scrollController = ScrollController();
-
+  final _screens = [
+    const BooksScreen(),
+    const LibraryBooksScreen(),
+    const BooksScreen(),
+    const BooksScreen(),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
         user: AuthRepository.instance.currentUser!,
       ),
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: booksScreen,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: Sizes.p20, vertical: Sizes.p8),
+        child: Consumer<BottomBarIndexProvider>(
+          builder: (ctx, provider, _) {
+            return _screens[provider.index];
+          },
+        ),
       ),
       bottomNavigationBar: _buildBottomBar(),
     );
   }
 
   DotCurvedBottomNav _buildBottomBar() {
+    final provider = locator<BottomBarIndexProvider>();
     return DotCurvedBottomNav(
       indicatorColor: secondaryColor,
       backgroundColor: Colors.transparent,
-      hideOnScroll: true,
-      scrollController: _scrollController,
       animationDuration: const Duration(milliseconds: 300),
       animationCurve: Curves.ease,
-      selectedIndex: _currentPage,
+      selectedIndex: provider.index,
       indicatorSize: 5,
       borderRadius: 25,
       height: 40,
       margin: const EdgeInsets.only(bottom: 20, top: 10),
       onTap: (index) {
-        setState(() => _currentPage = index);
+        if (provider.index != index) {
+          locator<BottomBarIndexProvider>().set(index);
+        }
       },
       items: [
         Icon(
           IconlyLight.home,
-          color: _currentPage == 0
+          color: provider.index == 0
               ? secondaryColor
               : primaryColor.withOpacity(0.5),
         ),
         Icon(
           IconlyLight.category,
-          color: _currentPage == 1
+          color: provider.index == 1
               ? secondaryColor
               : primaryColor.withOpacity(0.5),
         ),
         Icon(
           IconlyLight.bookmark,
-          color: _currentPage == 2
+          color: provider.index == 2
               ? secondaryColor
               : primaryColor.withOpacity(0.5),
         ),
         Icon(
           IconlyLight.user,
-          color: _currentPage == 3
+          color: provider.index == 3
               ? secondaryColor
               : primaryColor.withOpacity(0.5),
         ),

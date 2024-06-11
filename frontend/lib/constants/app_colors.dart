@@ -6,3 +6,5 @@ const secondaryColor = Color.fromRGBO(64, 64, 102, 1);
 const secondaryAccentColor = Color.fromRGBO(81, 81, 81, 1);
 const tercharyColor = Color.fromRGBO(252, 196, 0, 1);
 const bgColor = Colors.white;
+const Color correct = Color.fromRGBO(82, 154, 96, 1);
+const Color wrong = Color.fromRGBO(255, 0, 0, 1);

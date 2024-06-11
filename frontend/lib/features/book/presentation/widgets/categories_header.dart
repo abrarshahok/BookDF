@@ -23,7 +23,6 @@ class CategoriesHeader extends StatelessWidget {
         maxHeight: 60.0,
         child: Container(
           color: Theme.of(context).scaffoldBackgroundColor,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(

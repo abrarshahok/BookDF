@@ -1,3 +1,5 @@
+import 'package:bookdf/dependency_injection/dependency_injection.dart';
+import 'package:bookdf/providers/auth_repository_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import '../features/book/data/respository/reading_session_repository.dart';
@@ -31,7 +33,10 @@ class ReadingSessionRepositoryProvider with ChangeNotifier {
 
     result.fold(
       (error) => _setState(ErrorState(error)),
-      (sessions) => _setState(SuccessState(sessions)),
+      (sessions) {
+        locator<AuthRepositoryProvider>().addReadingSession(bookId);
+        _setState(SuccessState(sessions));
+      },
     );
   }
 

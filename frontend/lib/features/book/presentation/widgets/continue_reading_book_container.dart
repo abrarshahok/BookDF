@@ -69,6 +69,7 @@ class _ContinueReadingBookContainerState
     return SizedBox(
       height: 144,
       width: 290,
+      key: ValueKey(widget.readingSession.bookId),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

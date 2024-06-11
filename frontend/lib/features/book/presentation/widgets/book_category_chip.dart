@@ -26,7 +26,7 @@ class BookCategoryChip extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        margin: const EdgeInsets.symmetric(horizontal: 8),
+        margin: const EdgeInsets.only(right: 8),
         alignment: Alignment.center,
         child: Text(
           category,

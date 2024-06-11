@@ -43,7 +43,7 @@ class CustomTextFormField extends StatelessWidget {
       width: width,
       child: TextFormField(
         key: key,
-        style: secondaryStyle,
+        style: secondaryStyle.copyWith(fontWeight: FontWeight.bold),
         readOnly: readOnly,
         onTap: onTap,
         keyboardType: inputType,
@@ -54,7 +54,7 @@ class CustomTextFormField extends StatelessWidget {
           counterText: '',
           hintText: hintText,
           errorStyle: secondaryStyle.copyWith(color: Colors.red),
-          hintStyle: secondaryStyle,
+          hintStyle: secondaryStyle.copyWith(color: secondaryAccentColor),
           contentPadding: const EdgeInsets.symmetric(horizontal: Sizes.p20),
           border: _buildBorder(secondaryAccentColor, readOnly ? 0.2 : 1),
           enabledBorder: _buildBorder(secondaryAccentColor, readOnly ? 0.2 : 1),
