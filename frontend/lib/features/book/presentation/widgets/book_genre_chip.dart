@@ -2,12 +2,12 @@ import 'package:bookdf/constants/app_colors.dart';
 import 'package:bookdf/constants/app_font_styles.dart';
 import 'package:flutter/material.dart';
 
-class BookCategoryChip extends StatelessWidget {
+class BookGenreChip extends StatelessWidget {
   final String category;
   final VoidCallback onTap;
   final bool isSelected;
 
-  const BookCategoryChip({
+  const BookGenreChip({
     super.key,
     required this.category,
     required this.onTap,

@@ -2,7 +2,7 @@ import 'package:provider/provider.dart';
 import '../../../../providers/book_genre_provider.dart';
 import '/features/auth/data/respository/auth_respository.dart';
 import '/providers/auth_repository_provider.dart';
-import '/features/book/presentation/widgets/categories_header.dart';
+import '/features/book/presentation/widgets/books_genre_header.dart';
 import '/features/book/presentation/widgets/continue_reading_section.dart';
 import '/features/book/presentation/widgets/search_bar_section.dart';
 import 'package:flutter/widgets.dart';
@@ -27,7 +27,7 @@ class BooksScreen extends StatelessWidget {
                     : const SizedBox(),
           ),
         ),
-        const CategoriesHeader(),
+        const BooksGenreHeader(),
         Consumer<BookGenreProvider>(
           builder: (context, provider, _) {
             return BooksCategorySection(category: provider.genre);
