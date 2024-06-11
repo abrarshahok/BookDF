@@ -198,7 +198,14 @@ class BookController {
 
   static getBooks = async (req, res, next) => {
     try {
-      const books = await Book.find().sort({ updatedAt: -1 });
+      const genre = req.query.genre;
+
+      const books = await Book.find(
+        genre === "All" ? {} : { genre: genre }
+      ).sort({
+        updatedAt: -1,
+      });
+
       res.status(200).json({ success: true, books: books });
     } catch (error) {
       res.status(500).json({
@@ -214,6 +221,59 @@ class BookController {
       const books = await Book.find({ creator: req.userId }).sort({
         updatedAt: -1,
       });
+      res.status(200).json({ success: true, books: books });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
+    }
+  };
+
+  static toggleBookmarks = async (req, res, next) => {
+    const bookId = req.params.bookId;
+    try {
+      console.log(req.userId);
+
+      const user = await User.findById(req.userId);
+
+      console.log(user);
+
+      if (user.bookmarks.includes(bookId)) {
+        user.bookmarks.pull(bookId);
+
+        await user.save();
+
+        res
+          .status(200)
+          .json({ success: true, message: "Book removed from bookmarks" });
+      } else {
+        user.bookmarks.push(bookId);
+
+        await user.save();
+
+        res
+          .status(200)
+          .json({ success: true, message: "Book added to bookmarks" });
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
+    }
+  };
+
+  static getBookmarkedBook = async (req, res, next) => {
+    try {
+      const user = await User.findById(req.userId);
+
+      const books = await Book.find({ _id: { $in: user.bookmarks } }).sort({
+        updatedAt: -1,
+      });
+
       res.status(200).json({ success: true, books: books });
     } catch (error) {
       res.status(500).json({

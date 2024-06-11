@@ -22,7 +22,11 @@ router.patch(
   BookController.updateBook
 );
 
+router.get("/bookmarks", BookController.getBookmarkedBook);
+
 router.get("/", BookController.getBooks);
+
+router.patch("/toggleBookmarks/:bookId", BookController.toggleBookmarks);
 
 router.get("/library", BookController.getLibrayBooks);
 
