@@ -11,10 +11,12 @@ class BookController {
     const { title, author, description, genre } = req.body;
 
     const coverImageData = req.files["coverImage"][0];
-    const coverImageURL = generateBase64String(coverImageData);
+    const coverImageBase64String = generateBase64String(coverImageData);
 
     const pdfData = req.files["pdf"][0];
-    const pdfURL = generateBase64String(pdfData);
+    const pdfBase64String = generateBase64String(pdfData);
+
+    console.log(pdfData);
 
     const pages = await pdfPageCounter(pdfData);
 
@@ -25,9 +27,12 @@ class BookController {
         description,
         genre,
         pages,
-        coverImage: coverImageURL,
+        coverImage: coverImageBase64String,
         creator: req.userId,
-        pdf: pdfURL,
+        pdf: {
+          data: pdfBase64String,
+          fileName: pdfData.originalname,
+        },
         ratings: {
           averageRating: 0,
           numberOfRatings: 0,
@@ -48,6 +53,7 @@ class BookController {
         book: newBook,
       });
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         success: false,
         message: "Internal Server Error!",
@@ -57,7 +63,9 @@ class BookController {
   };
 
   static updateBook = async (req, res, next) => {
-    const { bookId, title, author, description, genre } = req.body;
+    const bookId = req.params.bookId;
+
+    const { title, author, description, genre } = req.body;
 
     const coverImageData = req.files["coverImage"][0];
 
@@ -88,20 +96,25 @@ class BookController {
       if (genre) book.genre = genre;
 
       if (coverImageData) {
-        const coverImageURL = generateBase64String(coverImageData);
-        book.coverImage = coverImageURL;
+        const coverImageBase64String = generateBase64String(coverImageData);
+        book.coverImage = coverImageBase64String;
       }
 
       if (pdfData) {
-        const pdfURL = generateBase64String(pdfData);
-        book.pdf = pdfURL;
+        const pdfBase64String = generateBase64String(pdfData);
+        book.pdf = {
+          data: pdfBase64String,
+          fileName: pdfData.originalname,
+        };
       }
 
       await book.save();
 
-      res
-        .status(200)
-        .json({ success: true, message: "Book updated successfully" });
+      res.status(200).json({
+        success: true,
+        message: "Book updated successfully",
+        book: book,
+      });
     } catch (error) {
       res.status(500).json({
         success: false,
@@ -198,7 +211,9 @@ class BookController {
 
   static getLibrayBooks = async (req, res, next) => {
     try {
-      const books = await Book.find({ creator: req.userId });
+      const books = await Book.find({ creator: req.userId }).sort({
+        updatedAt: -1,
+      });
       res.status(200).json({ success: true, books: books });
     } catch (error) {
       res.status(500).json({

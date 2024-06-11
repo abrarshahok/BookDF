@@ -13,6 +13,15 @@ router.post(
   BookController.addBook
 );
 
+router.patch(
+  "/:bookId",
+  upload.fields([
+    { name: "coverImage", maxCount: 1 },
+    { name: "pdf", maxCount: 1 },
+  ]),
+  BookController.updateBook
+);
+
 router.get("/", BookController.getBooks);
 
 router.get("/library", BookController.getLibrayBooks);
