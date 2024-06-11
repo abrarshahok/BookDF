@@ -34,7 +34,7 @@ class _BooksGenreHeaderState extends State<BooksGenreHeader> {
   Widget build(BuildContext context) {
     return Consumer<BookGenreProvider>(builder: (ctx, provider, _) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _handleScrollLogic(provider);
+        _handleScrollLogic(provider.genre);
       });
 
       return SliverPersistentHeader(
@@ -67,8 +67,8 @@ class _BooksGenreHeaderState extends State<BooksGenreHeader> {
     });
   }
 
-  void _handleScrollLogic(BookGenreProvider provider) {
-    if (provider.genre == 'Classics') {
+  void _handleScrollLogic(String genre) {
+    if (genre == 'Classics') {
       _scrollToMax();
     } else if (_isScrolledToEnd()) {
       _scrollToStart();
