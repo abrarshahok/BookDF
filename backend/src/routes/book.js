@@ -22,22 +22,22 @@ router.patch(
   BookController.updateBook
 );
 
-router.get("/bookmarks", BookController.getBookmarkedBook);
+router.delete("/:bookId", BookController.deleteBook);
 
 router.get("/", BookController.getBooks);
-
-router.get("/search", BookController.searchBooks);
-
-router.patch("/toggleBookmarks/:bookId", BookController.toggleBookmarks);
-
-router.get("/library", BookController.getLibrayBooks);
-
-router.delete("/:bookId", BookController.deleteBook);
 
 router.post("/:bookId/reviews", ReviewController.addReview);
 
 router.get("/:bookId/reviews", ReviewController.getReviews);
 
 router.delete("/:bookId/reviews", ReviewController.deleteReview);
+
+router.get("/search", BookController.searchBooks);
+
+router.get("/library", BookController.getLibrayBooks);
+
+router.get("/bookmarks", BookController.getBookmarkedBook);
+
+router.patch("/toggleBookmarks/:bookId", BookController.toggleBookmarks);
 
 module.exports = router;
