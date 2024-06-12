@@ -1,6 +1,7 @@
 const ReadingSession = require("../models/reading-session");
 const User = require("../models/user");
-const Book = require("../models/book");
+
+const readingSessionService = require("../services/reading-session-service");
 
 class ReadingSessionController {
   static createSession = async (req, res) => {
@@ -26,30 +27,15 @@ class ReadingSessionController {
       await session.save();
 
       const user = await User.findById(req.userId);
+
       user.currentReadings.push(bookId);
+
       await user.save();
 
-      const sessionWithBookDetails = await ReadingSession.aggregate([
-        {
-          $match: {
-            _id: session._id,
-          },
-        },
-        {
-          $lookup: {
-            from: "books",
-            localField: "bookId",
-            foreignField: "_id",
-            as: "bookDetails",
-          },
-        },
-        {
-          $unwind: {
-            path: "$bookDetails",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-      ]);
+      const sessionWithBookDetails =
+        await readingSessionService.getReadingSessionWithUserDetails(
+          session._id
+        );
 
       if (sessionWithBookDetails.length === 0) {
         return res
@@ -108,27 +94,10 @@ class ReadingSessionController {
 
       const user = await User.findById(userId);
 
-      const sessions = await ReadingSession.aggregate([
-        {
-          $match: {
-            bookId: { $in: user.currentReadings },
-          },
-        },
-        {
-          $lookup: {
-            from: "books",
-            localField: "bookId",
-            foreignField: "_id",
-            as: "bookDetails",
-          },
-        },
-        {
-          $unwind: {
-            path: "$bookDetails",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-      ]).sort({ updatedAt: -1 });
+      const sessions =
+        await readingSessionService.getAllReadingSessionsWithUserDetails(
+          user.currentReadings
+        );
 
       res.status(200).json({ success: true, sessions });
     } catch (err) {
