@@ -5,8 +5,6 @@ import '/utils/providers.dart';
 import 'routes/app_router.dart';
 import '/dependency_injection/dependency_injection.dart';
 
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
 void main() {
   configureDependencies();
   runApp(MyApp());
@@ -16,6 +14,7 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   final appRouter = AppRouter();
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(

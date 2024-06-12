@@ -10,6 +10,7 @@ class AppRouter extends $AppRouter {
         AutoRoute(page: HomeRoute.page),
         AutoRoute(page: BookDetailsRoute.page),
         AutoRoute(page: BookPdfViewRoute.page),
-        AutoRoute(page: AddBookRoute.page)
+        AutoRoute(page: AddBookRoute.page),
+        AutoRoute(page: UserProfileRoute.page)
       ];
 }

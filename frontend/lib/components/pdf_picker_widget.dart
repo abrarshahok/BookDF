@@ -51,7 +51,7 @@ class _PdfPickerWidgetState extends State<PdfPickerWidget> {
             height: 40,
             elevation: 5,
             color: pickedPdfFile != null ? wrong : secondaryColor,
-            label: pickedPdfFile != null ? 'Reselect' : 'Choose Pdf',
+            label: pickedPdfFile != null ? 'Change' : 'Choose Pdf',
             leadingIcon: IconlyLight.document,
             onPressed: _pickPdf,
           ),

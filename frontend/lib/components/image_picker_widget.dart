@@ -36,7 +36,11 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     if (pickedImage == null) {
       return;
     }
-    _loadedImage = File(pickedImage.path);
+
+    setState(() {
+      _loadedImage = File(pickedImage.path);
+    });
+
     widget.onImagePicked(_loadedImage!);
   }
 
@@ -80,8 +84,14 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
           gapH12,
           CustomButton(
             onPressed: _addImage,
-            color: _loadedImage != null ? wrong : secondaryColor,
-            label: _loadedImage != null ? 'Reselect' : 'Add Image',
+            color: _loadedImage != null ||
+                    (widget.imageString != null && widget.cacheKey != null)
+                ? wrong
+                : secondaryColor,
+            label: _loadedImage != null ||
+                    (widget.imageString != null && widget.cacheKey != null)
+                ? 'Change'
+                : 'Add Image',
             leadingIcon: IconlyLight.image,
             height: 40,
             elevation: 5,

@@ -20,6 +20,10 @@ class AuthRepositoryProvider extends ChangeNotifier {
 
   LoadState get state => _state;
 
+  bool _isUpdatingProfile = false;
+
+  bool get isUpdatingProfile => _isUpdatingProfile;
+
   Future<void> signin({
     required String email,
     required String password,
@@ -79,18 +83,24 @@ class AuthRepositoryProvider extends ChangeNotifier {
     );
   }
 
-  // Update profile method
-  Future<void> updateProfile(String name) async {
-    try {
-      _setState(LoadingState());
+  void updateProfile(String username, File? image, BuildContext context) async {
+    _isUpdatingProfile = true;
+    notifyListeners();
 
-      // Update profile logic here
+    final result = await AuthRepository.instance.updateUser(username, image);
 
-      _setState(InitialState());
-    } catch (e) {
-      _setState(ErrorState('Something went wrong'));
-      rethrow;
-    }
+    result.fold(
+      (error) {
+        showToast('Something went wrong!', context, isError: true);
+      },
+      (success) {
+        Navigator.pop(context);
+        showToast(success, context);
+      },
+    );
+
+    _isUpdatingProfile = false;
+    notifyListeners();
   }
 
   void switchAuthMode() {

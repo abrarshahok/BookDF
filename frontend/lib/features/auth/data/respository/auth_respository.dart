@@ -105,7 +105,7 @@ class AuthRepository {
 
   Future<bool> getUser(String jwt) async {
     try {
-      final uri = Uri.parse('$baseUrl/auth/get-user/');
+      final uri = Uri.parse('$baseUrl/auth/user/');
       final response = await http.get(
         uri,
         headers: {
@@ -125,6 +125,54 @@ class AuthRepository {
       return false;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<Either<Failure, String>> updateUser(
+    String username,
+    File? image,
+  ) async {
+    try {
+      final uri = Uri.parse('$baseUrl/auth/user/');
+      var request = h.MultipartRequest('PATCH', uri);
+
+      request.headers.addAll({
+        'Content-Type': 'multipart/form-data',
+        'Authorization': 'Bearer $jwt'
+      });
+
+      request.fields['username'] = username;
+
+      if (image != null) {
+        final mimeType = lookupMimeType(image.path);
+        final mediaType = mimeType != null
+            ? MediaType.parse(mimeType)
+            : MediaType('application', 'octet-stream');
+
+        final multipartFile = await h.MultipartFile.fromPath(
+          'pic',
+          image.path,
+          contentType: mediaType,
+        );
+        request.files.add(multipartFile);
+      }
+
+      final response = await request.send();
+
+      final responseString = await h.Response.fromStream(response);
+
+      final responseBody = jsonDecode(responseString.body);
+
+      if (response.statusCode == 200) {
+        if (responseBody['success']) {
+          _currentUser = User.fromJson(responseBody['user']);
+          return Right(responseBody['message']);
+        }
+      }
+
+      return Left(Failure(responseBody['message']));
+    } catch (e) {
+      return Left(Failure('Updating User error: $e'));
     }
   }
 

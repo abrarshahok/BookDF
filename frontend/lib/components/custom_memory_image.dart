@@ -10,12 +10,14 @@ class CustomMemoryImage extends StatelessWidget {
     required this.height,
     required this.width,
     required this.cacheKey,
+    this.fit,
   });
 
   final String imageString;
   final double height;
   final double width;
   final String cacheKey;
+  final BoxFit? fit;
 
   Uint8List _decodeBase64(String dataUrl) {
     final base64Str = dataUrl.split(',').last;
@@ -47,7 +49,7 @@ class CustomMemoryImage extends StatelessWidget {
               snapshot.data!,
               width: width,
               height: height,
-              fit: BoxFit.contain,
+              fit: fit ?? BoxFit.contain,
             );
           } else if (snapshot.hasError) {
             return const Icon(Icons.error);
