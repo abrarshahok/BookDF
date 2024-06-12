@@ -14,9 +14,8 @@ class AuthRepositoryProvider extends ChangeNotifier {
   AuthMode authMode = AuthMode.login;
   File? pickedImage;
 
-  LoadState _state = InitialState();
-
-  LoadState get state => _state;
+  LoadState _authState = InitialState();
+  LoadState get authState => _authState;
 
   bool _isUpdatingProfile = false;
   bool get isUpdatingProfile => _isUpdatingProfile;
@@ -29,7 +28,7 @@ class AuthRepositoryProvider extends ChangeNotifier {
     required String password,
     required BuildContext context,
   }) async {
-    _setState(LoadingState());
+    _setAuthState(LoadingState());
 
     final result = await AuthRepository.instance.signin(
       email: email,
@@ -37,10 +36,10 @@ class AuthRepositoryProvider extends ChangeNotifier {
     );
 
     result.fold(
-      (error) => _setState(ErrorState(error.message)),
+      (error) => _setAuthState(ErrorState(error.message)),
       (success) {
         if (success) {
-          _setState(SuccessState(success));
+          _setAuthState(SuccessState(success));
         } else {
           showToast('Singin Failed', context);
         }
@@ -60,7 +59,7 @@ class AuthRepositoryProvider extends ChangeNotifier {
     required File image,
     required BuildContext context,
   }) async {
-    _setState(LoadingState());
+    _setAuthState(LoadingState());
 
     final result = await AuthRepository.instance.signup(
       username: username,
@@ -70,7 +69,7 @@ class AuthRepositoryProvider extends ChangeNotifier {
     );
     result.fold(
       (error) {
-        _setState(ErrorState(error.message));
+        _setAuthState(ErrorState(error.message));
       },
       (success) {
         if (success) {
@@ -104,24 +103,24 @@ class AuthRepositoryProvider extends ChangeNotifier {
   }
 
   void autologin() async {
-    _setState(LoadingState(), build: false);
+    _setAuthState(LoadingState(), build: false);
 
     final result = await AuthRepository.instance.autoLogin();
 
     result.fold(
-      (error) => _setState(ErrorState(error.message)),
-      (success) => _setState(SuccessState(success)),
+      (error) => _setAuthState(ErrorState(error.message)),
+      (success) => _setAuthState(SuccessState(success)),
     );
   }
 
   void addReadingSession(String bookId) {
     AuthRepository.instance.addReadingSession(bookId);
-    _setState(SuccessState(true));
+    _setAuthState(SuccessState(true));
   }
 
   void deleteReadingSession(String bookId) {
     AuthRepository.instance.deleteReadingSession(bookId);
-    _setState(SuccessState(true));
+    _setAuthState(SuccessState(true));
   }
 
   void toggleBookmarks(String bookId, BuildContext context) async {
@@ -143,7 +142,7 @@ class AuthRepositoryProvider extends ChangeNotifier {
     AuthRepository.instance.signOut();
     Navigator.pop(context);
     Navigator.pop(context);
-    _setState(SuccessState(false));
+    _setAuthState(SuccessState(false));
   }
 
   void switchAuthMode() {
@@ -160,8 +159,8 @@ class AuthRepositoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _setState(LoadState state, {bool build = true}) {
-    _state = state;
+  void _setAuthState(LoadState state, {bool build = true}) {
+    _authState = state;
     if (build) {
       notifyListeners();
     }

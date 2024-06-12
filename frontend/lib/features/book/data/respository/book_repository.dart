@@ -46,6 +46,33 @@ class BookRepository {
     }
   }
 
+  Future<Either<String, List<Book>>> searchBooks(String title) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/books/search?title=$title'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_jwt'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        final List<Book> bookData = (responseData['books'] as List<dynamic>)
+            .map((book) => Book.fromJson(book))
+            .toList();
+        _books = bookData;
+        return Right(bookData);
+      }
+
+      return const Left('Failed to Load Books');
+    } catch (err) {
+      log(err.toString());
+      return const Left('Something went wrong!');
+    }
+  }
+
   Future<Either<String, String>> toggleBookmarks(String bookId) async {
     try {
       final response = await http.patch(

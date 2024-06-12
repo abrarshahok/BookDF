@@ -29,7 +29,7 @@ class _AppScreenState extends State<AppScreen> {
     return Scaffold(
       body: Consumer<AuthRepositoryProvider>(
         builder: (context, auth, _) {
-          final state = auth.state;
+          final state = auth.authState;
 
           if (state is LoadingState) {
             return const LoadingScreen(title: 'Loading');

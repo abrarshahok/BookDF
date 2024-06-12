@@ -5,33 +5,54 @@ import '../features/book/data/respository/book_repository.dart';
 
 @lazySingleton
 class BookRepositoryProvider with ChangeNotifier {
-  LoadState _state = InitialState();
-  LoadState get state => _state;
+  LoadState _bookState = InitialState();
+  LoadState get bookState => _bookState;
+
+  LoadState _searchState = InitialState();
+  LoadState get searchState => _searchState;
 
   void fetchBooks(String genre) async {
-    _setState(LoadingState(), build: false);
+    _setBookState(LoadingState(), build: false);
 
     final result = await BookRepository.instance.fetchBooks(genre);
 
     result.fold(
-      (error) => _setState(ErrorState(error)),
-      (books) => _setState(SuccessState(books)),
+      (error) => _setBookState(ErrorState(error)),
+      (books) => _setBookState(SuccessState(books)),
     );
   }
 
   void fetchBookmarkedBooks() async {
-    _setState(LoadingState(), build: false);
+    _setBookState(LoadingState(), build: false);
 
     final result = await BookRepository.instance.fetchBookmarkedBooks();
 
     result.fold(
-      (error) => _setState(ErrorState(error)),
-      (books) => _setState(SuccessState(books)),
+      (error) => _setBookState(ErrorState(error)),
+      (books) => _setBookState(SuccessState(books)),
     );
   }
 
-  void _setState(LoadState newState, {bool build = true}) {
-    _state = newState;
+  void searchBooks(String title) async {
+    _setSearchState(LoadingState());
+
+    final result = await BookRepository.instance.searchBooks(title);
+
+    result.fold(
+      (error) => _setSearchState(ErrorState(error)),
+      (books) => _setSearchState(SuccessState(books)),
+    );
+  }
+
+  void _setSearchState(LoadState state, {bool build = true}) {
+    _searchState = state;
+    if (build) {
+      notifyListeners();
+    }
+  }
+
+  void _setBookState(LoadState newState, {bool build = true}) {
+    _bookState = newState;
     if (build) {
       notifyListeners();
     }

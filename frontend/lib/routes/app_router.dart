@@ -11,6 +11,7 @@ class AppRouter extends $AppRouter {
         AutoRoute(page: BookDetailsRoute.page),
         AutoRoute(page: BookPdfViewRoute.page),
         AutoRoute(page: AddBookRoute.page),
-        AutoRoute(page: UserProfileRoute.page)
+        AutoRoute(page: UserProfileRoute.page),
+        AutoRoute(page: SearchBooksRoute.page)
       ];
 }

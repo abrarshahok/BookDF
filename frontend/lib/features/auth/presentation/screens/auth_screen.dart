@@ -202,7 +202,7 @@ class AuthCard extends StatelessWidget {
                   ],
                 ),
               gapH20,
-              if (auth.state is LoadingState)
+              if (auth.authState is LoadingState)
                 const CircularProgressIndicator(
                   color: secondaryColor,
                 )

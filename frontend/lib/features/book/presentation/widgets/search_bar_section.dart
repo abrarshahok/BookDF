@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
+import '/routes/app_router.gr.dart';
 import '/components/custom_text_form_field.dart';
 import '/constants/app_colors.dart';
 
@@ -16,7 +18,9 @@ class SearchBarSection extends StatelessWidget {
       ),
       hintText: 'Search for books',
       readOnly: true,
-      onTap: () {},
+      onTap: () {
+        context.router.push(SearchBooksRoute());
+      },
     );
   }
 }

@@ -3,13 +3,13 @@ import 'package:bookdf/constants/app_font_styles.dart';
 import 'package:flutter/material.dart';
 
 class BookGenreChip extends StatelessWidget {
-  final String category;
+  final String genre;
   final VoidCallback onTap;
   final bool isSelected;
 
   const BookGenreChip({
     super.key,
-    required this.category,
+    required this.genre,
     required this.onTap,
     this.isSelected = false,
   });
@@ -29,7 +29,7 @@ class BookGenreChip extends StatelessWidget {
         margin: const EdgeInsets.only(right: 8),
         alignment: Alignment.center,
         child: Text(
-          category,
+          genre,
           style: isSelected ? secondaryButtonStyle : primaryButtonStyle,
         ),
       ),

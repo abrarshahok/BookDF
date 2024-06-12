@@ -32,39 +32,43 @@ class _BooksGenreHeaderState extends State<BooksGenreHeader> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<BookGenreProvider>(builder: (ctx, provider, _) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _handleScrollLogic(provider.genre);
-      });
+    return Consumer<BookGenreProvider>(
+      builder: (ctx, provider, _) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _handleScrollLogic(provider.genre);
+        });
 
-      return SliverPersistentHeader(
-        pinned: true,
-        delegate: SliverAppBarDelegate(
-          minHeight: 60.0,
-          maxHeight: 60.0,
-          child: Container(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              controller: _scrollController,
-              child: Row(
-                children: genre
-                    .map(
-                      (category) => BookGenreChip(
-                        category: category,
-                        onTap: () {
-                          provider.set(category);
-                        },
-                        isSelected: category == provider.genre,
-                      ),
-                    )
-                    .toList(),
+        return SliverPersistentHeader(
+          pinned: true,
+          delegate: SliverAppBarDelegate(
+            minHeight: 60.0,
+            maxHeight: 60.0,
+            child: Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                controller: _scrollController,
+                child: Row(
+                  children: genre
+                      .map(
+                        (genre) => BookGenreChip(
+                          genre: genre,
+                          onTap: () {
+                            if (provider.genre != genre) {
+                              provider.set(genre);
+                            }
+                          },
+                          isSelected: genre == provider.genre,
+                        ),
+                      )
+                      .toList(),
+                ),
               ),
             ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
   void _handleScrollLogic(String genre) {

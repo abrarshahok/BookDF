@@ -39,7 +39,7 @@ class _BookmarkedBooksScreenState extends State<BookmarkedBooksScreen> {
         const SliverToBoxAdapter(child: gapH20),
         Consumer<BookRepositoryProvider>(
           builder: (context, provider, _) {
-            final state = provider.state;
+            final state = provider.bookState;
             if (state is LoadingState) {
               return const SliverToBoxAdapter(
                 child: CategoryBooksLoading(
