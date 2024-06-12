@@ -26,6 +26,8 @@ router.get("/bookmarks", BookController.getBookmarkedBook);
 
 router.get("/", BookController.getBooks);
 
+router.get("/search", BookController.searchBooks);
+
 router.patch("/toggleBookmarks/:bookId", BookController.toggleBookmarks);
 
 router.get("/library", BookController.getLibrayBooks);

@@ -216,6 +216,28 @@ class BookController {
     }
   };
 
+  static searchBooks = async (req, res, next) => {
+    try {
+      const title = req.query.title;
+
+      const books = await Book.find({
+        $or: {
+          title: { $regex: title, $options: "i" },
+        },
+      }).sort({
+        updatedAt: -1,
+      });
+
+      res.status(200).json({ success: true, books: books });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
+    }
+  };
+
   static getLibrayBooks = async (req, res, next) => {
     try {
       const books = await Book.find({ creator: req.userId }).sort({
