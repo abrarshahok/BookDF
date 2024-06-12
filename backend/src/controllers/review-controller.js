@@ -1,6 +1,8 @@
 const Review = require("../models/review");
 const Book = require("../models/book");
 
+const { getReviewsWithUserDetails } = require("../services/review-service");
+
 class ReviewController {
   static addReview = async (req, res, next) => {
     const { rating, reviewText } = req.body;
@@ -99,7 +101,7 @@ class ReviewController {
           .json({ success: false, message: "Book Not Found!" });
       }
 
-      const reviews = await Review.find({ _id: { $in: book.reviews } });
+      const reviews = await getReviewsWithUserDetails(book.reviews);
 
       res.status(200).json({ success: true, reviews: reviews });
     } catch (error) {
