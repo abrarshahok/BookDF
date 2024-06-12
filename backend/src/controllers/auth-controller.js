@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
 const convertToBase64String = require("../utils/to-base64-string");
 
 class AuthController {
@@ -72,7 +73,7 @@ class AuthController {
 
   static getUser = async (req, res, next) => {
     try {
-      const user = await User.findById(req.userId);
+      const user = await User.findById(req.userId).select("-password");
 
       if (!user) {
         return res
@@ -82,15 +83,7 @@ class AuthController {
 
       return res.status(200).send({
         success: true,
-        user: {
-          id: user._id,
-          username: user.username,
-          email: user.email,
-          pic: user.pic,
-          library: user.library,
-          bookmarks: user.bookmarks,
-          currentReadings: user.currentReadings,
-        },
+        user: user,
       });
     } catch (error) {
       res.status(500).json({
@@ -107,7 +100,7 @@ class AuthController {
     let picData = req.files["pic"];
 
     try {
-      const user = await User.findById(req.userId);
+      const user = await User.findById(req.userId).select("-password");
 
       if (!user) {
         return res
@@ -128,15 +121,7 @@ class AuthController {
       return res.status(200).send({
         success: true,
         message: "User updated successfuly",
-        user: {
-          id: user._id,
-          username: user.username,
-          email: user.email,
-          pic: user.pic,
-          library: user.library,
-          bookmarks: user.bookmarks,
-          currentReadings: user.currentReadings,
-        },
+        user: user,
       });
     } catch (error) {
       console.log(error);
