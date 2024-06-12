@@ -1,12 +1,10 @@
 import 'dart:io';
-import 'package:auto_route/auto_route.dart';
 import 'package:bookdf/utils/show_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import '../features/book/data/respository/book_repository.dart';
 import '/features/auth/data/respository/auth_respository.dart';
-import '/routes/app_router.gr.dart';
 import '/states/load_state.dart';
 
 enum AuthMode { signup, login }
@@ -21,8 +19,10 @@ class AuthRepositoryProvider extends ChangeNotifier {
   LoadState get state => _state;
 
   bool _isUpdatingProfile = false;
-
   bool get isUpdatingProfile => _isUpdatingProfile;
+
+  bool _hidePassword = true;
+  bool get hidePassword => _hidePassword;
 
   Future<void> signin({
     required String email,
@@ -103,15 +103,6 @@ class AuthRepositoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void switchAuthMode() {
-    if (authMode == AuthMode.login) {
-      authMode = AuthMode.signup;
-    } else {
-      authMode = AuthMode.login;
-    }
-    notifyListeners();
-  }
-
   void autologin() async {
     _setState(LoadingState(), build: false);
 
@@ -150,7 +141,23 @@ class AuthRepositoryProvider extends ChangeNotifier {
 
   void signOut(BuildContext context) {
     AuthRepository.instance.signOut();
-    context.router.replace(const AuthRoute());
+    Navigator.pop(context);
+    Navigator.pop(context);
+    _setState(SuccessState(false));
+  }
+
+  void switchAuthMode() {
+    if (authMode == AuthMode.login) {
+      authMode = AuthMode.signup;
+    } else {
+      authMode = AuthMode.login;
+    }
+    notifyListeners();
+  }
+
+  void togglePasswordVisibility() {
+    _hidePassword = !_hidePassword;
+    notifyListeners();
   }
 
   void _setState(LoadState state, {bool build = true}) {

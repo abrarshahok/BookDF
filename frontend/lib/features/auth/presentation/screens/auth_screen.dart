@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
+import 'package:bookdf/components/custom_icon_button.dart';
 import 'package:flutter/material.dart';
+import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
 import '../../../../constants/app_sizes.dart';
 import '/constants/app_colors.dart';
@@ -54,6 +56,11 @@ class AuthCard extends StatelessWidget {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  final _usernameFocusNode = FocusNode();
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+  final _confirmPasswordFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthRepositoryProvider>(
@@ -85,6 +92,10 @@ class AuthCard extends StatelessWidget {
                       ),
                       hintText: 'Enter username here',
                       controller: _usernameController,
+                      focusNode: _usernameFocusNode,
+                      onSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(_emailFocusNode);
+                      },
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Username is required!';
@@ -108,8 +119,13 @@ class AuthCard extends StatelessWidget {
                 key: ValueKey(
                   auth.authMode == AuthMode.signup ? 'email-signup' : 'email',
                 ),
+                inputType: TextInputType.emailAddress,
                 hintText: 'Enter email here',
                 controller: _emailController,
+                focusNode: _emailFocusNode,
+                onSubmitted: (_) {
+                  FocusScope.of(context).requestFocus(_passwordFocusNode);
+                },
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Email is required!';
@@ -130,9 +146,23 @@ class AuthCard extends StatelessWidget {
                 key: ValueKey(auth.authMode == AuthMode.signup
                     ? 'password-signup'
                     : 'password'),
-                obscureText: true,
+                obscureText: auth.hidePassword,
+                suffixIcon: CustomIconButton(
+                  onTap: auth.togglePasswordVisibility,
+                  icon: auth.hidePassword ? IconlyLight.show : IconlyLight.hide,
+                ),
+                inputType: TextInputType.visiblePassword,
                 hintText: 'Enter password here',
                 controller: _passwordController,
+                focusNode: _passwordFocusNode,
+                onSubmitted: (_) {
+                  if (auth.authMode == AuthMode.signup) {
+                    FocusScope.of(context)
+                        .requestFocus(_confirmPasswordFocusNode);
+                  } else {
+                    _submit(context);
+                  }
+                },
                 validator: (pass) {
                   if (pass!.isEmpty) {
                     return 'Password is required!';
@@ -157,6 +187,10 @@ class AuthCard extends StatelessWidget {
                     CustomTextFormField(
                       key: const ValueKey('confirmPassword'),
                       obscureText: true,
+                      focusNode: _confirmPasswordFocusNode,
+                      onSubmitted: (_) {
+                        _submit(context);
+                      },
                       validator: (confirmPass) {
                         if (confirmPass != _passwordController.text) {
                           return 'Passwords do not match!';

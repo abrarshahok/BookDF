@@ -1,4 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:bookdf/components/confirmation_dialogue.dart';
+import 'package:bookdf/components/custom_border_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/app_colors.dart';
@@ -76,20 +78,47 @@ class UserProfileScreen extends StatelessWidget {
         builder: (context, auth, _) => BottomAppBar(
           elevation: 0,
           color: bgColor,
-          child: CustomButton(
-            onPressed: auth.isUpdatingProfile
-                ? null
-                : () => auth.updateProfile(
-                      userNameController.text,
-                      auth.pickedImage,
-                      context,
-                    ),
-            label: auth.isUpdatingProfile ? 'Saving...' : 'Save Profile',
-            width: double.infinity,
-            height: 50,
-            borderRadius: 8,
-            elevation: 5,
-            textStyle: buttonStyle,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomButton(
+                onPressed: auth.isUpdatingProfile
+                    ? null
+                    : () => auth.updateProfile(
+                          userNameController.text,
+                          auth.pickedImage,
+                          context,
+                        ),
+                label: auth.isUpdatingProfile ? 'Saving...' : 'Save Changes',
+                width: 230,
+                height: 50,
+                borderRadius: 8,
+                elevation: 5,
+                textStyle: buttonStyle,
+              ),
+              gapW8,
+              CustomBorderButton(
+                label: 'Logout',
+                width: 100,
+                height: 50,
+                borderRadius: 8,
+                textStyle: buttonStyle.copyWith(color: primaryColor),
+                onPressed: () {
+                  ConfirmationDialogue(
+                    context: context,
+                    textAlign: TextAlign.left,
+                    title: 'Are you sure?',
+                    subtitle: 'Do you want to logout?',
+                    onTapPrimary: () {
+                      context.router.maybePop();
+                    },
+                    onTapSecondary: () {
+                      auth.signOut(context);
+                    },
+                  ).show();
+                },
+              ),
+            ],
           ),
         ),
       ),

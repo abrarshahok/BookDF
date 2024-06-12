@@ -20,6 +20,7 @@ class CustomTextFormField extends StatelessWidget {
     this.prefixIcon,
     this.onSubmitted,
     this.onSaved,
+    this.focusNode,
   });
 
   final String hintText;
@@ -36,6 +37,7 @@ class CustomTextFormField extends StatelessWidget {
   final Function(String)? onChanged;
   final int? maxLength;
   final TextInputType? inputType;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,7 @@ class CustomTextFormField extends StatelessWidget {
         key: key,
         style: secondaryStyle.copyWith(fontWeight: FontWeight.bold),
         readOnly: readOnly,
+        focusNode: focusNode,
         onTap: onTap,
         keyboardType: inputType,
         maxLength: maxLength,
