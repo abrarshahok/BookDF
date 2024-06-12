@@ -7,11 +7,11 @@ class AuthController {
   static signup = async (req, res, next) => {
     const { username, email, password } = req.body;
 
+    const picData = req.files["pic"][0];
+    const picBase64String = convertToBase64String(picData);
+
     try {
       const hashedPassword = await bcrypt.hash(password, 12);
-
-      const picData = req.files["pic"][0];
-      const picBase64String = convertToBase64String(picData);
 
       const user = User({
         username: username,
@@ -87,12 +87,59 @@ class AuthController {
           username: user.username,
           email: user.email,
           pic: user.pic,
-          libray: user.libray,
+          library: user.library,
           bookmarks: user.bookmarks,
           currentReadings: user.currentReadings,
         },
       });
     } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
+    }
+  };
+
+  static updateUser = async (req, res, next) => {
+    const { username } = req.body;
+
+    let picData = req.files["pic"];
+
+    try {
+      const user = await User.findById(req.userId);
+
+      if (!user) {
+        return res
+          .status(200)
+          .send({ success: false, message: "User not found!" });
+      }
+
+      if (username) user.username = username;
+
+      if (picData) {
+        picData = picData[0];
+        const picBase64String = convertToBase64String(picData);
+        user.pic = picBase64String;
+      }
+
+      await user.save();
+
+      return res.status(200).send({
+        success: true,
+        message: "User updated successfuly",
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          pic: user.pic,
+          library: user.library,
+          bookmarks: user.bookmarks,
+          currentReadings: user.currentReadings,
+        },
+      });
+    } catch (error) {
+      console.log(error);
       res.status(500).json({
         success: false,
         message: "Internal Server Error!",

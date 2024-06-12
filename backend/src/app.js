@@ -8,7 +8,6 @@ const app = express();
 const bookRoutes = require("./routes/book");
 const authRoutes = require("./routes/auth");
 const readingSessions = require("./routes/reading-session");
-
 const isAuth = require("./middlewares/is-auth");
 require("dotenv").config();
 

@@ -24,6 +24,15 @@ router.post(
   AuthController.signin
 );
 
-router.get("/get-user", isAuth, AuthController.getUser);
+router.patch(
+  "/user",
+  isAuth,
+  upload.fields([{ name: "pic", maxCount: 1 }]),
+  authValidator.validateUpdateUserRules(),
+  validationResultHandler,
+  AuthController.updateUser
+);
+
+router.get("/user", isAuth, AuthController.getUser);
 
 module.exports = router;

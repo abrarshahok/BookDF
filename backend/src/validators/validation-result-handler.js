@@ -9,6 +9,8 @@ const validationResultHandler = (req, res, next) => {
 
   errors.array().map((err) => extractedErrors.push(err.msg));
 
+  console.log(errors);
+
   return res.status(422).json({
     errors: extractedErrors,
   });

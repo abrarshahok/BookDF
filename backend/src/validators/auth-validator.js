@@ -24,6 +24,15 @@ const validateSignupRules = () => {
   ];
 };
 
+const validateUpdateUserRules = () => {
+  return [
+    body("username")
+      .trim()
+      .isLength({ min: 3 })
+      .withMessage("Name should be of atleast 3 characters."),
+  ];
+};
+
 const validateSigninRules = () => {
   return [
     body("email")
@@ -37,4 +46,8 @@ const validateSigninRules = () => {
   ];
 };
 
-module.exports = { validateSignupRules, validateSigninRules };
+module.exports = {
+  validateSignupRules,
+  validateSigninRules,
+  validateUpdateUserRules,
+};
