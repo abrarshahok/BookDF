@@ -201,7 +201,7 @@ class BookController {
       const genre = req.query.genre;
 
       const books = await Book.find(
-        genre === "All" ? {} : { genre: genre }
+        genre === "All" || genre === undefined ? {} : { genre: genre }
       ).sort({
         updatedAt: -1,
       });
