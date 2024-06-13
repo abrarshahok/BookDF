@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import '/features/book/presentation/widgets/book_description.dart';
 import '/features/book/presentation/widgets/book_title_and_author.dart';
 import '/features/book/presentation/widgets/rating_section.dart';
-
 import '/states/load_state.dart';
 import '/features/book/data/models/reading_session.dart';
 import '../../../../utils/save_base64_pdf.dart';
@@ -75,40 +74,70 @@ class BookDetailsScreen extends StatelessWidget {
     return BottomAppBar(
       color: bgColor,
       elevation: 0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          gapW20,
-          CustomIconButton(
-            onTap: () {
-              locator<AuthRepositoryProvider>()
-                  .toggleBookmarks(book.id!, context);
-            },
-            icon: isBookmarked ? IconlyBold.bookmark : IconlyLight.bookmark,
-            iconColor: accentColor,
-            size: 30,
+      child: Container(
+        height: 70,
+        decoration: BoxDecoration(
+          color: bgColor,
+          border: Border(
+            top: BorderSide(
+              color: secondaryAccentColor.withOpacity(0.15),
+              width: 1,
+            ),
           ),
-          gapW8,
-          if (isBookInCurrentReading)
-            CustomBorderButton(
-              width: 300,
-              height: 50,
-              borderRadius: 8,
-              label: 'Continue Reading...',
-              textStyle: buttonStyle.copyWith(color: secondaryColor),
-              onPressed: () => _openPdfScreen(isBookInCurrentReading, context),
-            )
-          else
+        ),
+        padding: const EdgeInsets.only(top: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            gapW20,
+            CustomIconButton(
+              onTap: () {
+                locator<AuthRepositoryProvider>()
+                    .toggleBookmarks(book.id!, context);
+              },
+              icon: isBookmarked ? IconlyBold.bookmark : IconlyLight.bookmark,
+              iconColor: accentColor,
+              size: 30,
+            ),
+            gapW8,
+            if (isBookInCurrentReading)
+              CustomBorderButton(
+                width: 180,
+                height: 50,
+                borderRadius: 8,
+                label: 'Continue Reading...',
+                textStyle: buttonStyle.copyWith(color: secondaryColor),
+                onPressed: () =>
+                    _openPdfScreen(isBookInCurrentReading, context),
+              )
+            else
+              CustomButton(
+                width: 180,
+                height: 50,
+                borderRadius: 8,
+                elevation: 5,
+                label: 'Start Reading',
+                textStyle: buttonStyle,
+                onPressed: () =>
+                    _openPdfScreen(isBookInCurrentReading, context),
+              ),
+            gapW8,
             CustomButton(
-              width: 300,
+              width: 80,
               height: 50,
               borderRadius: 8,
               elevation: 5,
-              label: 'Start Reading',
+              label: 'Reviews',
               textStyle: buttonStyle,
-              onPressed: () => _openPdfScreen(isBookInCurrentReading, context),
+              onPressed: () => context.router.push(
+                BookReviewsRoute(
+                  bookTitle: book.title!,
+                  bookId: book.id!,
+                ),
+              ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

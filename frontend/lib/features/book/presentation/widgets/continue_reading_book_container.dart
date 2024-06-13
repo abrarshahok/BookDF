@@ -66,81 +66,86 @@ class _ContinueReadingBookContainerState
         : (widget.readingSession.currentPage /
                 widget.readingSession.totalPages) *
             100;
-    return SizedBox(
-      height: 144,
-      width: 290,
-      key: ValueKey(widget.readingSession.bookId),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            height: 144,
-            width: 100,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: isLoading ? secondaryAccentColor : dominantColor,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                bottomLeft: Radius.circular(12),
+    return GestureDetector(
+      onTap: () => context.router
+          .push(BookDetailsRoute(book: widget.readingSession.bookDetails)),
+      child: SizedBox(
+        height: 144,
+        width: 290,
+        key: ValueKey(widget.readingSession.bookId),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              height: 144,
+              width: 100,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: isLoading ? secondaryAccentColor : dominantColor,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                ),
+              ),
+              child: isLoading
+                  ? null
+                  : CustomMemoryImage(
+                      imageString:
+                          widget.readingSession.bookDetails.coverImage!,
+                      height: 100,
+                      width: 100,
+                      cacheKey: widget.readingSession.bookDetails.coverImage!,
+                    ),
+            ),
+            gapW12,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.readingSession.bookDetails.title!,
+                    style: titleStyle,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    widget.readingSession.bookDetails.author!,
+                    style: secondaryStyle,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  gapH12,
+                  AnimatedSlider(currentValue: progressValue),
+                  gapH16,
+                  CustomBorderButton(
+                    label: 'Continue...',
+                    height: 29,
+                    width: 109,
+                    borderRadius: 8,
+                    onPressed: () {
+                      final book = widget.readingSession.bookDetails;
+                      final fileName =
+                          book.title!.replaceAll(' ', '-') + book.id!;
+                      final base64Pdf = book.pdf!.data!.split(',').last;
+                      saveBase64Pdf(base64Pdf, fileName).then((path) {
+                        return context.router.push(
+                          BookPdfViewRoute(
+                            path: path,
+                            sessionId: widget.readingSession.id,
+                            bookName: book.title!,
+                            currentPage: widget.readingSession.currentPage,
+                          ),
+                        );
+                      }).catchError((err) {
+                        throw err;
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
-            child: isLoading
-                ? null
-                : CustomMemoryImage(
-                    imageString: widget.readingSession.bookDetails.coverImage!,
-                    height: 100,
-                    width: 100,
-                    cacheKey: widget.readingSession.bookDetails.coverImage!,
-                  ),
-          ),
-          gapW12,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  widget.readingSession.bookDetails.title!,
-                  style: titleStyle,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  widget.readingSession.bookDetails.author!,
-                  style: secondaryStyle,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                gapH12,
-                AnimatedSlider(currentValue: progressValue),
-                gapH16,
-                CustomBorderButton(
-                  label: 'Continue...',
-                  height: 29,
-                  width: 109,
-                  borderRadius: 8,
-                  onPressed: () {
-                    final book = widget.readingSession.bookDetails;
-                    final fileName =
-                        book.title!.replaceAll(' ', '-') + book.id!;
-                    final base64Pdf = book.pdf!.data!.split(',').last;
-                    saveBase64Pdf(base64Pdf, fileName).then((path) {
-                      return context.router.push(
-                        BookPdfViewRoute(
-                          path: path,
-                          sessionId: widget.readingSession.id,
-                          bookName: book.title!,
-                          currentPage: widget.readingSession.currentPage,
-                        ),
-                      );
-                    }).catchError((err) {
-                      throw err;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-          gapW48,
-        ],
+            gapW48,
+          ],
+        ),
       ),
     );
   }

@@ -8,6 +8,9 @@ class BookRepositoryProvider with ChangeNotifier {
   LoadState _bookState = InitialState();
   LoadState get bookState => _bookState;
 
+  LoadState _reviewsState = InitialState();
+  LoadState get reviewsState => _reviewsState;
+
   LoadState _searchState = InitialState();
   LoadState get searchState => _searchState;
 
@@ -44,8 +47,26 @@ class BookRepositoryProvider with ChangeNotifier {
     );
   }
 
+  void fetchReviews(String bookId) async {
+    _setReviewsState(LoadingState(), build: false);
+
+    final result = await BookRepository.instance.fetchReviews(bookId);
+
+    result.fold(
+      (error) => _setReviewsState(ErrorState(error)),
+      (reviews) => _setReviewsState(SuccessState(reviews)),
+    );
+  }
+
   void _setSearchState(LoadState state, {bool build = true}) {
     _searchState = state;
+    if (build) {
+      notifyListeners();
+    }
+  }
+
+  void _setReviewsState(LoadState state, {bool build = true}) {
+    _reviewsState = state;
     if (build) {
       notifyListeners();
     }

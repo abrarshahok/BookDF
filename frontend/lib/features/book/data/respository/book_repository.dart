@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:bookdf/features/book/data/models/review.dart';
 import 'package:dartz/dartz.dart';
 import '/config/http_config.dart';
 import '/features/book/data/models/book.dart';
 import '/features/auth/data/respository/auth_respository.dart';
-// import 'package:http/http.dart' as http;
 
 class BookRepository {
   BookRepository._();
@@ -16,6 +16,9 @@ class BookRepository {
 
   List<Book> _bookmarkBooks = [];
   List<Book> get bookmarkBooks => _bookmarkBooks;
+
+  List<Review> _reviews = [];
+  List<Review> get reviews => _reviews;
 
   final _jwt = AuthRepository.instance.jwt!;
 
@@ -117,6 +120,36 @@ class BookRepository {
         _bookmarkBooks = bookData;
 
         return Right(bookData);
+      }
+
+      return const Left('Something went wrong!');
+    } catch (err) {
+      log(err.toString());
+      return const Left('Something went wrong!');
+    }
+  }
+
+  Future<Either<String, List<Review>>> fetchReviews(String bookId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/books/$bookId/reviews'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_jwt'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        final List<Review> reviewsData =
+            (responseData['reviews'] as List<dynamic>)
+                .map((review) => Review.fromJson(review))
+                .toList();
+
+        _reviews = reviewsData;
+
+        return Right(reviewsData);
       }
 
       return const Left('Something went wrong!');

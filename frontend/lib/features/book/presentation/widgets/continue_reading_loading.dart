@@ -6,17 +6,19 @@ class ContinueReadingLoading extends StatelessWidget {
     super.key,
     required this.height,
     required this.width,
+    this.showSizedBox = true,
   });
 
   final double height;
   final double width;
+  final bool showSizedBox;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200,
+      height: showSizedBox ? 200 : null,
       child: ListView.builder(
-        scrollDirection: Axis.horizontal,
+        scrollDirection: showSizedBox ? Axis.horizontal : Axis.vertical,
         itemCount: 3,
         itemBuilder: (ctx, index) =>
             ShimmerEffect(width: width, height: height),
