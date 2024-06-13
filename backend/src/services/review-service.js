@@ -10,7 +10,7 @@ const getReviewsWithUserDetails = async (reviewIds) => {
     {
       $lookup: {
         from: "users",
-        localField: "user",
+        localField: "userId",
         foreignField: "_id",
         as: "userDetails",
       },

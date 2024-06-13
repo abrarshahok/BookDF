@@ -10,7 +10,7 @@ class ReviewController {
 
     try {
       const newReview = new Review({
-        user: req.userId,
+        userId: req.userId,
         reviewText: reviewText,
         rating: rating,
       });
