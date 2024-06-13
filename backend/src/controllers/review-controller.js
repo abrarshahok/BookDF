@@ -54,7 +54,7 @@ class ReviewController {
           .json({ success: false, message: "Review Not Found!" });
       }
 
-      if (review.user.toString() !== req.userId) {
+      if (review.userId.toString() !== req.userId) {
         return res
           .status(402)
           .json({ success: true, message: "Unauthorized!" });
