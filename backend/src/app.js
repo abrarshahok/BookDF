@@ -36,7 +36,7 @@ app.use("/books", isAuth, bookRoutes);
 app.use("/readingSessions", isAuth, readingSessions);
 
 mongoose
-  .connect(process.env.DB_URL)
+  .connect(process.env.MONGODB_URI)
   .then((res) => {
     app.listen(process.env.PORT || 3000);
     console.log("Connected!");
