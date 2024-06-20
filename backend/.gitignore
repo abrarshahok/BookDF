@@ -9,3 +9,4 @@ temp/
 
 # Ignore access log
 access.log
+.vercel

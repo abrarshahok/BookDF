@@ -1,14 +1,12 @@
 const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
-const fs = require("fs");
 const bodyParser = require("body-parser");
-const path = require("path");
 const app = express();
-const bookRoutes = require("./routes/book");
-const authRoutes = require("./routes/auth");
-const readingSessions = require("./routes/reading-session");
-const isAuth = require("./middlewares/is-auth");
+const bookRoutes = require("./src/routes/book");
+const authRoutes = require("./src/routes/auth");
+const readingSessions = require("./src/routes/reading-session");
+const isAuth = require("./src/middlewares/is-auth");
 require("dotenv").config();
 
 app.use(bodyParser.json());
@@ -24,13 +22,14 @@ app.use((req, res, next) => {
   next();
 });
 
-const accessLogStream = fs.createWriteStream(
-  path.join(path.resolve(), "access.log"),
-  { flags: "a" }
-);
-
-app.use(morgan("combined", { stream: accessLogStream }));
-
+app.get("/", (req, res, next) => {
+  res.send({
+    Developer: "Abrar Ahmed Shahok",
+    App: "BookDF",
+    Status: "Live",
+    Version: "1.0.0",
+  });
+});
 app.use("/auth", authRoutes);
 app.use("/books", isAuth, bookRoutes);
 app.use("/readingSessions", isAuth, readingSessions);
