@@ -22,7 +22,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       final name = user.username!;
       return AppBar(
         backgroundColor: secondaryColor,
-        elevation: 10,
+        elevation: 2,
         shadowColor: primaryColor,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(

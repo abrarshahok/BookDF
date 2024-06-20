@@ -1,12 +1,8 @@
-import 'dart:io';
-
 import 'package:chopper/chopper.dart';
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:http/http.dart' as h;
 
-final localHost = Platform.isIOS ? "127.0.0.1" : "10.0.2.2";
-
-final baseUrl = 'http://$localHost:3000';
+const baseUrl = 'https://bookdf.vercel.app';
 
 final http = ChopperClient(
   // Base URL
